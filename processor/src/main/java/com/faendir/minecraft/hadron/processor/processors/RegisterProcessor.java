@@ -19,7 +19,6 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.MirroredTypeException;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -34,16 +33,17 @@ public class RegisterProcessor extends BaseProcessor {
         super(processingEnv);
     }
 
-    public void process(RoundEnvironment roundEnv) throws IOException {
+    @Override
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
         Multimap<TypeName, TypeName> map = HashMultimap.create();
-        for (Element element : roundEnv.getElementsAnnotatedWith(Register.class)) {
+        for (Map.Entry<Element, Register> entry : supplier.getElementsAnnotatedWith(Register.class).entrySet()) {
             TypeName event;
             try {
-                event = TypeName.get(element.getAnnotation(Register.class).value());
+                event = TypeName.get(entry.getValue().value());
             } catch (MirroredTypeException e) {
                 event = TypeName.get(e.getTypeMirror());
             }
-            map.put(event, TypeName.get(element.asType()));
+            map.put(event, TypeName.get(entry.getKey().asType()));
         }
         if(!map.isEmpty()) {
             TypeSpec.Builder builder = TypeSpec.classBuilder("Registry" + count++)

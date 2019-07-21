@@ -17,7 +17,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author lukas
@@ -29,11 +29,13 @@ public class GenerateItemProcessor extends BaseProcessor{
         super(processingEnv);
     }
 
-    public void process(RoundEnvironment roundEnv) throws IOException {
-        for (Element e : roundEnv.getElementsAnnotatedWith(GenerateItem.class)) {
+    @Override
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+        for (Map.Entry<Element, GenerateItem> entry : supplier.getElementsAnnotatedWith(GenerateItem.class).entrySet()) {
+            Element e = entry.getKey();
+            GenerateItem generateItem = entry.getValue();
             String name = e.getSimpleName().toString();
             TypeName typeName = TypeName.get(e.asType());
-            GenerateItem generateItem = e.getAnnotation(GenerateItem.class);
             String id = generateItem.value();
             String parent = generateItem.parent();
             if(parent.length() == 0) {

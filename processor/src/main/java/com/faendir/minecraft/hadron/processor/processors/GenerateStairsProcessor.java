@@ -19,7 +19,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import java.io.IOException;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,13 +35,15 @@ public class GenerateStairsProcessor extends BaseProcessor {
         super(processingEnv);
     }
 
-    public void process(RoundEnvironment roundEnv) throws IOException {
-        for (Element e : roundEnv.getElementsAnnotatedWith(GenerateStairs.class)) {
+    @Override
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+        for (Map.Entry<Element, GenerateStairs> entry : supplier.getElementsAnnotatedWith(GenerateStairs.class).entrySet()) {
+            Element e = entry.getKey();
+            GenerateStairs generateStairs = entry.getValue();
             String name = e.getSimpleName().toString();
             if (name.endsWith("s")) {
                 name = name.substring(0, name.length() - 1);
             }
-            GenerateStairs generateStairs = e.getAnnotation(GenerateStairs.class);
             String stairId = generateStairs.id();
             if (stairId.endsWith("s")) {
                 stairId = stairId.substring(0, stairId.length() - 1);

@@ -23,9 +23,9 @@ public class TagProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(RoundEnvironment roundEnv) throws Exception {
-        for (Element e : roundEnv.getElementsAnnotatedWith(Tag.class)) {
-            Tag tag = e.getAnnotation(Tag.class);
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+        for (Map.Entry<Element, Tag> e : supplier.getElementsAnnotatedWith(Tag.class).entrySet()) {
+            Tag tag = e.getValue();
             tags.put(tag.tag(), Utils.MOD_ID + ":" + tag.id());
         }
         if (roundEnv.processingOver()) {

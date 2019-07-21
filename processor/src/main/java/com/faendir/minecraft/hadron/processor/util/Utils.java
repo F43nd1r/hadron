@@ -22,6 +22,7 @@ public final class Utils {
     public static final String BLOCK_MODELS = "assets.hadron.models.block";
     public static final String ITEM_MODELS = "assets.hadron.models.item";
     public static final String BLOCK_TAGS = "data.minecraft.tags.blocks";
+    public static final String RECIPES = "data.hadron.recipes.generated";
     public static final String MOD_ID = "hadron";
 
     private Utils() {

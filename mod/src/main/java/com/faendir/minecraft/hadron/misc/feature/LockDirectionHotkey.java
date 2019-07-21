@@ -221,7 +221,6 @@ public class LockDirectionHotkey {
 
     public static void setProfile(PlayerEntity player, LockProfile profile) {
         String id = player.getUniqueID().toString();
-        System.out.println(id);
 
         if (profile == null) {
             lockProfiles.remove(id);

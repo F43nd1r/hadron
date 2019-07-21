@@ -23,9 +23,9 @@ public class BlockStateProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(RoundEnvironment roundEnv) throws Exception {
-        for (Element e : roundEnv.getElementsAnnotatedWith(BlockState.class)) {
-            BlockState blockState = e.getAnnotation(BlockState.class);
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+        for (Map.Entry<Element, BlockState> e : supplier.getElementsAnnotatedWith(BlockState.class).entrySet()) {
+            BlockState blockState = e.getValue();
             Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCKSTATES, blockState.id(), new BlockStateJson(blockState));
         }
     }

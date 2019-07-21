@@ -19,6 +19,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,13 +35,14 @@ public class GenerateWallProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(RoundEnvironment roundEnv) throws Exception {
-        for (Element e : roundEnv.getElementsAnnotatedWith(GenerateWall.class)) {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+        for (Map.Entry<Element, GenerateWall> entry : supplier.getElementsAnnotatedWith(GenerateWall.class).entrySet()) {
+            Element e = entry.getKey();
+            GenerateWall generateWall = entry.getValue();
             String name = e.getSimpleName().toString();
             if (name.endsWith("s")) {
                 name = name.substring(0, name.length() - 1);
             }
-            GenerateWall generateWall = e.getAnnotation(GenerateWall.class);
             String wallId = generateWall.id();
             if (wallId.endsWith("s")) {
                 wallId = wallId.substring(0, wallId.length() - 1);

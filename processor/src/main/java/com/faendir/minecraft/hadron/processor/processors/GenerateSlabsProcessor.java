@@ -19,6 +19,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import java.util.Map;
 
 import static com.faendir.minecraft.hadron.processor.util.Utils.withPrefix;
 
@@ -32,13 +33,14 @@ public class GenerateSlabsProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(RoundEnvironment roundEnv) throws Exception {
-        for (Element e : roundEnv.getElementsAnnotatedWith(GenerateSlabs.class)) {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+        for (Map.Entry<Element, GenerateSlabs> entry : supplier.getElementsAnnotatedWith(GenerateSlabs.class).entrySet()) {
+            Element e = entry.getKey();
+            GenerateSlabs generateSlabs = entry.getValue();
             String name = e.getSimpleName().toString();
             if (name.endsWith("s")) {
                 name = name.substring(0, name.length() - 1);
             }
-            GenerateSlabs generateSlabs = e.getAnnotation(GenerateSlabs.class);
             String slabId = generateSlabs.id();
             if (slabId.endsWith("s")) {
                 slabId = slabId.substring(0, slabId.length() - 1);
