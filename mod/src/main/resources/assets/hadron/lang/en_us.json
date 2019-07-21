@@ -1,0 +1,14 @@
+{
+  "block.hadron.granite_bricks" : "Granite Bricks",
+  "block.hadron.granite_brick_stairs": "Granite Brick Stairs",
+  "block.hadron.granite_brick_slabs": "Granite Brick Slabs",
+  "block.hadron.andesite_bricks" : "Andesite Bricks",
+  "block.hadron.andesite_brick_stairs": "Andesite Brick Stairs",
+  "block.hadron.andesite_brick_slabs": "Andesite Brick Slabs",
+  "block.hadron.diorite_bricks" : "Diorite Bricks",
+  "block.hadron.diorite_brick_stairs": "Diorite Brick Stairs",
+  "block.hadron.diorite_brick_slabs": "Diorite Brick Slabs",
+  "config.hadron.building.more_stone_bricks" : "Enable More Stone Bricks",
+  "hadron.misc.rotationLockBefore":"You have enabled Rotation Lock. Any blocks you place will be oriented in the direction you were looking. Press [",
+  "hadron.misc.rotationLockAfter":"] to change or reset it. This message won't appear again."
+}

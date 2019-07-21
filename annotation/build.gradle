@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+apply plugin: 'net.minecraftforge.gradle'
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+minecraft {
+    mappings channel: 'snapshot', version: '20190621-1.14.2'
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:$forgeVersion"
+}

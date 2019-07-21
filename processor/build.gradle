@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+apply plugin: 'net.minecraftforge.gradle'
+
+version 'unspecified'
+
+sourceCompatibility = targetCompatibility = 1.10
+
+minecraft {
+    mappings channel: 'snapshot', version: '20190720-1.14.3'
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:$forgeVersion"
+    compile "com.google.auto.service:auto-service:$autoServiceVersion"
+    compile "com.google.auto.service:auto-service-annotations:$autoServiceVersion"
+    compile 'com.squareup:javapoet:1.11.1'
+    compile "com.google.guava:guava:28.0-jre"
+    compile 'com.fasterxml.jackson.core:jackson-core:2.9.9'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+    compile project(':annotation')
+}
