@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.faendir.minecraft.hadron.processor.util.Utils.noPlural;
 import static com.faendir.minecraft.hadron.processor.util.Utils.withPrefix;
 
 /**
@@ -39,17 +40,9 @@ public class GenerateWallProcessor extends BaseProcessor {
         for (Map.Entry<Element, GenerateWall> entry : supplier.getElementsAnnotatedWith(GenerateWall.class).entrySet()) {
             Element e = entry.getKey();
             GenerateWall generateWall = entry.getValue();
-            String name = e.getSimpleName().toString();
-            if (name.endsWith("s")) {
-                name = name.substring(0, name.length() - 1);
-            }
-            String wallId = generateWall.id();
-            if (wallId.endsWith("s")) {
-                wallId = wallId.substring(0, wallId.length() - 1);
-            }
-            wallId += "_wall";
+            String wallId = noPlural(generateWall.id()) + "_wall";
             String texture = generateWall.texture();
-            TypeSpec.Builder builder = TypeSpec.classBuilder(name + "Wall")
+            TypeSpec.Builder builder = TypeSpec.classBuilder(noPlural(e.getSimpleName().toString()) + "Wall")
                     .addModifiers(Modifier.PUBLIC)
                     .superclass(WallBlock.class)
                     .addAnnotation(AnnotationSpec.builder(Register.class).addMember("value", "$T.class", Block.class).build())

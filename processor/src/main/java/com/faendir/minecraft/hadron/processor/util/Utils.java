@@ -56,4 +56,11 @@ public final class Utils {
     public static String withPrefix(String id) {
         return MOD_ID + ":" +id;
     }
+
+    public static String noPlural(String s) {
+        if (s.endsWith("s")) {
+            return s.substring(0, s.length() - 1);
+        }
+        return s;
+    }
 }

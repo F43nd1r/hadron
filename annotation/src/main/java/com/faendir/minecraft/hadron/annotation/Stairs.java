@@ -2,6 +2,11 @@ package com.faendir.minecraft.hadron.annotation;
 
 import net.minecraft.block.Block;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * @author lukas
  * @since 21.07.19
@@ -77,6 +82,8 @@ import net.minecraft.block.Block;
         tag = "stairs"
 )
 @Composite
+@Retention(RetentionPolicy.CLASS)
+@Target(ElementType.TYPE)
 public @interface Stairs {
     String id();
     String texture();
