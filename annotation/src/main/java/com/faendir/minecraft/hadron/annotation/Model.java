@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @since 02.07.19
  */
 @Repeatable(Models.class)
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface Model {
     String id();

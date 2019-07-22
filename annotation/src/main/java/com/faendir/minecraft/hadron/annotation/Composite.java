@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * @author lukas
  * @since 21.07.19
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Composite {
 }

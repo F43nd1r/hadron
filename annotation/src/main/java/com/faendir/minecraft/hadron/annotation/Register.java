@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @author lukas
  * @since 01.07.19
  */
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface Register {
     Class<? extends IForgeRegistryEntry<? extends IForgeRegistryEntry>> value();

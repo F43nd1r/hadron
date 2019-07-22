@@ -1,12 +1,9 @@
 package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.BlockState;
-import com.faendir.minecraft.hadron.annotation.GenerateItem;
 import com.faendir.minecraft.hadron.annotation.GenerateStairs;
 import com.faendir.minecraft.hadron.annotation.Model;
-import com.faendir.minecraft.hadron.annotation.Recipe;
-import com.faendir.minecraft.hadron.annotation.Register;
-import com.faendir.minecraft.hadron.annotation.Tag;
+import com.faendir.minecraft.hadron.annotation.Stairs;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
@@ -53,17 +50,11 @@ public class GenerateStairsProcessor extends BaseProcessor {
             TypeSpec.Builder builder = TypeSpec.classBuilder(name + "Stairs")
                     .addModifiers(Modifier.PUBLIC)
                     .superclass(StairsBlock.class)
-                    .addAnnotation(AnnotationSpec.builder(Register.class).addMember("value", "$T.class", Block.class).build())
-                    .addAnnotation(AnnotationSpec.builder(GenerateItem.class).addMember("value", "$S", stairId).build())
-                    .addAnnotation(AnnotationSpec.builder(Recipe.class).addMember("pattern", "{\"x  \",\"xx \",\"xxx\"}")
-                            .addMember("keys", "@$T(key = \"x\", value = $S)", Recipe.Key.class, withPrefix(generateStairs.id()))
+                    .addAnnotation(AnnotationSpec.builder(Stairs.class)
                             .addMember("id", "$S", stairId)
-                            .addMember("count", "4").build())
-                    .addAnnotation(createBlockState(stairId))
-                    .addAnnotation(createModel(stairId, "minecraft:block/stairs", texture))
-                    .addAnnotation(createModel(stairId + "_outer", "minecraft:block/outer_stairs", texture))
-                    .addAnnotation(createModel(stairId + "_inner", "minecraft:block/inner_stairs", texture))
-                    .addAnnotation(AnnotationSpec.builder(Tag.class).addMember("id", "$S", stairId).addMember("tag", "$S", "stairs").build())
+                    .addMember("texture", "$S", texture)
+                    .addMember("material", "$S", withPrefix(generateStairs.id()))
+                    .build())
                     .addMethod(MethodSpec.constructorBuilder()
                             .addStatement("super(new $1T().getDefaultState(), $2T.from(new $1T()))", TypeName.get(e.asType()), Block.Properties.class)
                             .addStatement("setRegistryName($S)", stairId).build());
