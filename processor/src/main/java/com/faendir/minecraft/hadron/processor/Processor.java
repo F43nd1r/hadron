@@ -25,6 +25,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
@@ -73,7 +74,9 @@ public class Processor extends AbstractProcessor {
         try {
             Multimap<Element, ExpandedAnnotationMirror> elements = HashMultimap.create();
             for (Element e : roundEnv.getElementsAnnotatedWithAny(annotations.toArray(new TypeElement[0]))) {
-                buildAnnotationList(e).forEach(a -> elements.put(e, a));
+                if (!e.getModifiers().contains(Modifier.ABSTRACT)) {
+                    buildAnnotationList(e).forEach(a -> elements.put(e, a));
+                }
             }
             BaseProcessor.AnnotatedElementSupplier supplier = new BaseProcessor.AnnotatedElementSupplier() {
                 @Override
@@ -121,7 +124,8 @@ public class Processor extends AbstractProcessor {
     }
 
     private void expand(Map<String, String> replacements, ExpandedAnnotationMirror expand) {
-        outer : for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : expand.getMirror().getElementValues().entrySet()) {
+        outer:
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : expand.getMirror().getElementValues().entrySet()) {
             ExecutableElement method = entry.getKey();
             AnnotationValue value = entry.getValue();
             String methodName = method.getSimpleName().toString();
@@ -283,12 +287,12 @@ public class Processor extends AbstractProcessor {
                 if (result instanceof ExpandedAnnotationMirror) {
                     Annotation original = (Annotation) getOriginal(method, args);
                     result = getAnnotationProxy((Class<Annotation>) method.getReturnType(), original, (ExpandedAnnotationMirror) result);
-                } else if(result instanceof ExpandedAnnotationMirror[]) {
+                } else if (result instanceof ExpandedAnnotationMirror[]) {
                     Annotation[] original = (Annotation[]) getOriginal(method, args);
                     ExpandedAnnotationMirror[] mirrors = (ExpandedAnnotationMirror[]) result;
                     Annotation[] out = (Annotation[]) Array.newInstance(method.getReturnType().getComponentType(), original.length);
                     for (int i = 0; i < original.length; i++) {
-                        out[i] = getAnnotationProxy((Class<Annotation>)((Class<Annotation[]>) method.getReturnType()).getComponentType(), original[i], mirrors[i]);
+                        out[i] = getAnnotationProxy((Class<Annotation>) ((Class<Annotation[]>) method.getReturnType()).getComponentType(), original[i], mirrors[i]);
                     }
                     result = out;
                 }
