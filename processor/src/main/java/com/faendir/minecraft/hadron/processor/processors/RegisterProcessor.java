@@ -34,8 +34,8 @@ public class RegisterProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
-        Multimap<TypeName, TypeName> map = HashMultimap.create();
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+        Multimap<TypeName, Element> map = HashMultimap.create();
         for (Map.Entry<Element, Register> entry : supplier.getElementsAnnotatedWith(Register.class).entrySet()) {
             TypeName event;
             try {
@@ -43,19 +43,19 @@ public class RegisterProcessor extends BaseProcessor {
             } catch (MirroredTypeException e) {
                 event = TypeName.get(e.getTypeMirror());
             }
-            map.put(event, TypeName.get(entry.getKey().asType()));
+            map.put(event, entry.getKey());
         }
         if(!map.isEmpty()) {
             TypeSpec.Builder builder = TypeSpec.classBuilder("Registry" + count++)
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(AnnotationSpec.builder(Mod.EventBusSubscriber.class).addMember("modid", "$S", Utils.MOD_ID).addMember("bus", "$T.MOD", Mod.EventBusSubscriber.Bus.class).build());
-            for (Map.Entry<TypeName, Collection<TypeName>> entry : map.asMap().entrySet()) {
+            for (Map.Entry<TypeName, Collection<Element>> entry : map.asMap().entrySet()) {
                 MethodSpec.Builder method = MethodSpec.methodBuilder("register" + ((ClassName) entry.getKey()).simpleName())
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .addAnnotation(SubscribeEvent.class)
                         .addParameter(ParameterizedTypeName.get(ClassName.get(RegistryEvent.Register.class), entry.getKey()), "event");
-                for (TypeName register : entry.getValue()) {
-                    method.addStatement("event.getRegistry().register(new $T())", register);
+                for (Element register : entry.getValue()) {
+                    method.addStatement("event.getRegistry().register($T.$L)", register.getEnclosingElement(), register);
                 }
                 builder.addMethod(method.build());
             }

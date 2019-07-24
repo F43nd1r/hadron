@@ -4,6 +4,7 @@ import com.faendir.minecraft.hadron.annotation.Tag;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -23,7 +24,7 @@ public class TagProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
         for (Map.Entry<Element, Tag> e : supplier.getElementsAnnotatedWith(Tag.class).entrySet()) {
             Tag tag = e.getValue();
             tags.put(tag.tag(), Utils.MOD_ID + ":" + tag.id());

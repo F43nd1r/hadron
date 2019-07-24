@@ -11,9 +11,11 @@ import com.faendir.minecraft.hadron.processor.processors.ModelProcessor;
 import com.faendir.minecraft.hadron.processor.processors.RecipeProcessor;
 import com.faendir.minecraft.hadron.processor.processors.RegisterProcessor;
 import com.faendir.minecraft.hadron.processor.processors.TagProcessor;
+import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.google.auto.service.AutoService;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -54,6 +56,7 @@ import java.util.stream.Collectors;
 @SupportedAnnotationTypes("*")
 public class Processor extends AbstractProcessor {
     private List<BaseProcessor> processors = new ArrayList<>();
+    private static int count = 0;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -61,10 +64,10 @@ public class Processor extends AbstractProcessor {
         processors.add(new RegisterProcessor(processingEnv));
         processors.add(new GenerateItemProcessor(processingEnv));
         processors.add(new RecipeProcessor(processingEnv));
-        processors.add(new GenerateStairsProcessor(processingEnv));
         processors.add(new BlockStateProcessor(processingEnv));
         processors.add(new ModelProcessor(processingEnv));
         processors.add(new GenerateSlabsProcessor(processingEnv));
+        processors.add(new GenerateStairsProcessor(processingEnv));
         processors.add(new GenerateWallProcessor(processingEnv));
         processors.add(new TagProcessor(processingEnv));
     }
@@ -85,10 +88,14 @@ public class Processor extends AbstractProcessor {
                             .collect(Collectors.toMap(Map.Entry::getKey, e -> getAnnotationProxy(clazz, e.getValue())));
                 }
             };
+            TypeSpec.Builder registry = TypeSpec.classBuilder("ModObjects" + count++).addModifiers(Modifier.PUBLIC);
             for (BaseProcessor processor : processors) {
-                processor.process(supplier, roundEnv);
+                processor.process(supplier, roundEnv, registry);
             }
-
+            TypeSpec spec = registry.build();
+            if (!spec.fieldSpecs.isEmpty() || !spec.methodSpecs.isEmpty()) {
+                Utils.writeClass(processingEnv.getFiler(), spec);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

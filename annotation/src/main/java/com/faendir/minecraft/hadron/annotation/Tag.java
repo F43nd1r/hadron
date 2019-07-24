@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * @since 21.07.19
  */
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.TYPE)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Tag {
     String id();
     String tag();

@@ -1,4 +1,4 @@
-include ":mod"
+include 'mod'
 include 'annotation'
 include 'processor'
 

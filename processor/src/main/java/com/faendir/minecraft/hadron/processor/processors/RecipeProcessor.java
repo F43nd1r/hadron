@@ -2,12 +2,15 @@ package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.processor.util.Utils;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.faendir.minecraft.hadron.processor.util.Utils.ensureNameSpaced;
 
 /**
  * @author lukas
@@ -20,14 +23,14 @@ public class RecipeProcessor extends BaseProcessor{
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
         for (Map.Entry<Element, Recipe> e : supplier.getElementsAnnotatedWith(Recipe.class).entrySet()) {
             Recipe recipe = e.getValue();
             Map<String, ItemJson> map = new HashMap<>();
             for (Recipe.Key key : recipe.keys()) {
                 map.put(key.key(), new ItemJson(key.value(), 1));
             }
-            RecipeJson json = new RecipeJson(recipe.pattern(), map, new ItemJson(Utils.MOD_ID + ":" + recipe.id(), recipe.count()));
+            RecipeJson json = new RecipeJson(recipe.pattern(), map, new ItemJson(ensureNameSpaced(recipe.id()), recipe.count()));
             Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, recipe.id(), json);
         }
     }

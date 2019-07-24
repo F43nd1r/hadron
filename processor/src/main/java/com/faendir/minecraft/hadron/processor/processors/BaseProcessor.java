@@ -1,5 +1,7 @@
 package com.faendir.minecraft.hadron.processor.processors;
 
+import com.squareup.javapoet.TypeSpec;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -17,7 +19,7 @@ public abstract class BaseProcessor {
         this.processingEnv = processingEnv;
     }
 
-    public abstract void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception;
+    public abstract void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception;
 
     @FunctionalInterface
     public interface AnnotatedElementSupplier {

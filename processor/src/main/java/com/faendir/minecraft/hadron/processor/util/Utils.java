@@ -53,8 +53,30 @@ public final class Utils {
         }
     }
 
-    public static String withPrefix(String id) {
-        return MOD_ID + ":" +id;
+    public static String withModNameSpace(String id) {
+        return MOD_ID + ":" + id;
+    }
+
+    public static String ensureNameSpaced(String id) {
+        int i = id.indexOf(':');
+        if (i == -1) {
+            return withModNameSpace(id);
+        }
+        return id;
+    }
+
+    public static String removeNameSpace(String id) {
+        int i = id.indexOf(':');
+        if (i != -1) {
+            return id.substring(i + 1);
+        }
+        return id;
+    }
+
+    public static String withBlockInfix(String id) {
+        id = ensureNameSpaced(id);
+        int i = id.indexOf(':');
+        return id.substring(0, i + 1) + "block/" + id.substring(i + 1);
     }
 
     public static String noPlural(String s) {

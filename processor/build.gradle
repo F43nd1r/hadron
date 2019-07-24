@@ -8,7 +8,7 @@ version 'unspecified'
 sourceCompatibility = targetCompatibility = 1.10
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190720-1.14.3'
+    mappings channel: 'snapshot', version: "$minecraftVersion"
 }
 
 dependencies {

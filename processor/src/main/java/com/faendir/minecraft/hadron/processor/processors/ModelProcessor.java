@@ -3,6 +3,7 @@ package com.faendir.minecraft.hadron.processor.processors;
 import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Models;
 import com.faendir.minecraft.hadron.processor.util.Utils;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -22,7 +23,7 @@ public class ModelProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
         List<Model> models = Stream.concat(supplier.getElementsAnnotatedWith(Model.class).values().stream(),
                 supplier.getElementsAnnotatedWith(Models.class).values().stream().flatMap(e -> Stream.of(e.value())))
                 .collect(Collectors.toList());

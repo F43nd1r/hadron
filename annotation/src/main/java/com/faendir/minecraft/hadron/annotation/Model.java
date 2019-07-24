@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Repeatable(Models.class)
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.TYPE)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Model {
     String id();
     String parent();

@@ -2,6 +2,7 @@ package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.BlockState;
 import com.faendir.minecraft.hadron.processor.util.Utils;
+import com.squareup.javapoet.TypeSpec;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -23,7 +24,7 @@ public class BlockStateProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
         for (Map.Entry<Element, BlockState> e : supplier.getElementsAnnotatedWith(BlockState.class).entrySet()) {
             BlockState blockState = e.getValue();
             Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCKSTATES, blockState.id(), new BlockStateJson(blockState));

@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 )
 @Composite
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.TYPE)
+@Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Slabs {
     String id();
     String texture();

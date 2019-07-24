@@ -2,10 +2,8 @@ package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.GenerateWall;
 import com.faendir.minecraft.hadron.annotation.Wall;
-import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.squareup.javapoet.AnnotationSpec;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import net.minecraft.block.Block;
 import net.minecraft.block.WallBlock;
@@ -16,8 +14,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import java.util.Map;
 
-import static com.faendir.minecraft.hadron.processor.util.Utils.noPlural;
-import static com.faendir.minecraft.hadron.processor.util.Utils.withPrefix;
+import static com.faendir.minecraft.hadron.processor.util.Utils.*;
 
 /**
  * @author lukas
@@ -29,24 +26,20 @@ public class GenerateWallProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
         for (Map.Entry<Element, GenerateWall> entry : supplier.getElementsAnnotatedWith(GenerateWall.class).entrySet()) {
             Element e = entry.getKey();
             GenerateWall generateWall = entry.getValue();
-            String wallId = noPlural(generateWall.id()) + "_wall";
+            String wallId = noPlural(removeNameSpace(generateWall.id())) + "_wall";
             String texture = generateWall.texture();
-            TypeSpec.Builder builder = TypeSpec.classBuilder(noPlural(e.getSimpleName().toString()) + "Wall")
-                    .addModifiers(Modifier.PUBLIC)
-                    .superclass(WallBlock.class)
+            registry.addField(FieldSpec.builder(Block.class, wallId.toUpperCase(), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .addAnnotation(AnnotationSpec.builder(Wall.class)
                             .addMember("id", "$S", wallId)
                             .addMember("texture", "$S", texture)
-                            .addMember("material", "$S", withPrefix(generateWall.id()))
+                            .addMember("material", "$S", ensureNameSpaced(generateWall.id()))
                             .build())
-                    .addMethod(MethodSpec.constructorBuilder()
-                            .addStatement("super($2T.from(new $1T()))", TypeName.get(e.asType()), Block.Properties.class)
-                            .addStatement("setRegistryName($S)", wallId).build());
-            Utils.writeClass(processingEnv.getFiler(), builder.build());
+                            .initializer("new $T($T.from($T.$L)).setRegistryName($S)", WallBlock.class, Block.Properties.class, e.getEnclosingElement(), e, wallId)
+                    .build());
         }
     }
 }
