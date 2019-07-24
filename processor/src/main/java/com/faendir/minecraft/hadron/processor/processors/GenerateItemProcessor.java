@@ -10,6 +10,7 @@ import com.squareup.javapoet.TypeSpec;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -32,7 +33,7 @@ public class GenerateItemProcessor extends BaseProcessor {
 
     @Override
     public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
-        for (Map.Entry<Element, GenerateItem> entry : supplier.getElementsAnnotatedWith(GenerateItem.class).entrySet()) {
+        for (Pair<Element, GenerateItem> entry : supplier.getElementsAnnotatedWith(GenerateItem.class)) {
             Element e = entry.getKey();
             GenerateItem generateItem = entry.getValue();
             String id = generateItem.value();

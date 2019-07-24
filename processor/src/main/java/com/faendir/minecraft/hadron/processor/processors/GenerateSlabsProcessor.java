@@ -7,12 +7,12 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 import net.minecraft.block.Block;
 import net.minecraft.block.SlabBlock;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import java.util.Map;
 
 import static com.faendir.minecraft.hadron.processor.util.Utils.*;
 
@@ -27,7 +27,7 @@ public class GenerateSlabsProcessor extends BaseProcessor {
 
     @Override
     public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
-        for (Map.Entry<Element, GenerateSlabs> entry : supplier.getElementsAnnotatedWith(GenerateSlabs.class).entrySet()) {
+        for (Pair<Element, GenerateSlabs> entry : supplier.getElementsAnnotatedWith(GenerateSlabs.class)) {
             Element e = entry.getKey();
             GenerateSlabs generateSlabs = entry.getValue();
             String slabId = noPlural(removeNameSpace(generateSlabs.id())) + "_slabs";

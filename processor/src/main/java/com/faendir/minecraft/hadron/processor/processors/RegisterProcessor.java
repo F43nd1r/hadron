@@ -13,6 +13,7 @@ import com.squareup.javapoet.TypeSpec;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -36,7 +37,7 @@ public class RegisterProcessor extends BaseProcessor {
     @Override
     public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
         Multimap<TypeName, Element> map = HashMultimap.create();
-        for (Map.Entry<Element, Register> entry : supplier.getElementsAnnotatedWith(Register.class).entrySet()) {
+        for (Pair<Element, Register> entry : supplier.getElementsAnnotatedWith(Register.class)) {
             TypeName event;
             try {
                 event = TypeName.get(entry.getValue().value());

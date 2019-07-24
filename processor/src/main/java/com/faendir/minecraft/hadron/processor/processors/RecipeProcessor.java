@@ -3,6 +3,7 @@ package com.faendir.minecraft.hadron.processor.processors;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.squareup.javapoet.TypeSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -17,7 +18,8 @@ import static com.faendir.minecraft.hadron.processor.util.Utils.ensureNameSpaced
  * @author lukas
  * @since 01.07.19
  */
-public class RecipeProcessor extends BaseProcessor{
+public class RecipeProcessor extends BaseProcessor {
+    int count = 0;
 
     public RecipeProcessor(ProcessingEnvironment processingEnv) {
         super(processingEnv);
@@ -25,19 +27,19 @@ public class RecipeProcessor extends BaseProcessor{
 
     @Override
     public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
-        for (Map.Entry<Element, Recipe.Shaped> e : supplier.getElementsAnnotatedWith(Recipe.Shaped.class).entrySet()) {
-            Recipe.Shaped recipe = e.getValue();
+        for (Pair<Element, Recipe.Shaped> pair : supplier.getElementsAnnotatedWithRepeatable(Recipe.Shaped.class, Recipe.Shaped.Repeat.class)) {
+            Recipe.Shaped recipe = pair.getValue();
             Map<String, ItemJson> map = new HashMap<>();
             for (Recipe.Key key : recipe.keys()) {
                 map.put(key.key(), new ItemJson(key.value(), 1));
             }
             ShapedRecipeJson json = new ShapedRecipeJson(recipe.pattern(), map, new ItemJson(ensureNameSpaced(recipe.id()), recipe.count()));
-            Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, recipe.id(), json);
+            Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, count++ + recipe.id(), json);
         }
-        for (Map.Entry<Element, Recipe.Shapeless> e : supplier.getElementsAnnotatedWith(Recipe.Shapeless.class).entrySet()) {
-            Recipe.Shapeless recipe = e.getValue();
+        for (Pair<Element, Recipe.Shapeless> pair : supplier.getElementsAnnotatedWithRepeatable(Recipe.Shapeless.class, Recipe.Shapeless.Repeat.class)) {
+            Recipe.Shapeless recipe = pair.getValue();
             ShapelessRecipeJson json = new ShapelessRecipeJson(Stream.of(recipe.ingredients()).map(i -> new ItemJson(ensureNameSpaced(i), 1)).toArray(ItemJson[]::new), new ItemJson(ensureNameSpaced(recipe.id()), recipe.count()));
-            Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, recipe.id(), json);
+            Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, count++ + recipe.id(), json);
         }
     }
 

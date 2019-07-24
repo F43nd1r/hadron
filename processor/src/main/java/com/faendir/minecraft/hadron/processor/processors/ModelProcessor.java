@@ -1,18 +1,16 @@
 package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.Model;
-import com.faendir.minecraft.hadron.annotation.Models;
 import com.faendir.minecraft.hadron.annotation.Texture;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.squareup.javapoet.TypeSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.faendir.minecraft.hadron.processor.util.Utils.ensureInfix;
 
@@ -27,11 +25,8 @@ public class ModelProcessor extends BaseProcessor {
 
     @Override
     public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
-        List<Model> models = Stream.concat(supplier.getElementsAnnotatedWith(Model.class).values().stream(),
-                supplier.getElementsAnnotatedWith(Models.class).values().stream().flatMap(e -> Stream.of(e.value())))
-                .collect(Collectors.toList());
-        for (Model model : models) {
-            Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCK_MODELS, model.id(), new ModelJson(model));
+        for (Pair<Element, Model> model : supplier.getElementsAnnotatedWithRepeatable(Model.class, Model.Repeat.class)) {
+            Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCK_MODELS, model.getValue().id(), new ModelJson(model.getValue()));
         }
     }
 

@@ -16,6 +16,7 @@ import com.google.auto.service.AutoService;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.squareup.javapoet.TypeSpec;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author lukas
@@ -83,9 +85,30 @@ public class Processor extends AbstractProcessor {
             }
             BaseProcessor.AnnotatedElementSupplier supplier = new BaseProcessor.AnnotatedElementSupplier() {
                 @Override
-                public <T extends Annotation> Map<Element, T> getElementsAnnotatedWith(Class<T> clazz) {
+                public <T extends Annotation> List<Pair<Element, T>> getElementsAnnotatedWith(Class<T> clazz) {
                     return elements.entries().stream().filter(e -> e.getValue().getMirror().getAnnotationType().toString().equals(clazz.getName().replace('$', '.')))
-                            .collect(Collectors.toMap(Map.Entry::getKey, e -> getAnnotationProxy(clazz, e.getValue())));
+                            .map(e -> Pair.of(e.getKey(), getAnnotationProxy(clazz, e.getValue())))
+                            .collect(Collectors.toList());
+                }
+
+                @Override
+                public <T extends Annotation, U extends Annotation> List<Pair<Element, T>> getElementsAnnotatedWithRepeatable(Class<T> clazz, Class<U> repeatable) {
+                    Method valueMethod;
+                    try {
+                        valueMethod = repeatable.getMethod("value");
+                    } catch (NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return Stream.concat(getElementsAnnotatedWith(clazz).stream().map(e -> Pair.of(e.getKey(), e.getValue())),
+                            getElementsAnnotatedWith(repeatable).stream().flatMap(e -> {
+                                try {
+                                    //noinspection unchecked
+                                    return Stream.of((T[]) valueMethod.invoke(e.getValue())).map(v -> Pair.of(e.getKey(), v));
+                                } catch (IllegalAccessException | InvocationTargetException ex) {
+                                    ex.printStackTrace();
+                                    return Stream.empty();
+                                }
+                            })).collect(Collectors.toList());
                 }
             };
             TypeSpec.Builder registry = TypeSpec.classBuilder("ModObjects" + count++).addModifiers(Modifier.PUBLIC);

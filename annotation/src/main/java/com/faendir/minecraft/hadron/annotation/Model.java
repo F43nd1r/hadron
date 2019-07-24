@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * @author lukas
  * @since 02.07.19
  */
-@Repeatable(Models.class)
+@Repeatable(Model.Repeat.class)
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Model {
@@ -18,4 +18,9 @@ public @interface Model {
     String parent();
     Texture[] textures();
 
+    @Retention(RetentionPolicy.CLASS)
+    @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
+    @interface Repeat {
+        Model[] value();
+    }
 }
