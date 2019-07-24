@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.faendir.minecraft.hadron.processor.util.Utils.withBlockInfix;
+
 /**
  * @author lukas
  * @since 01.07.19
@@ -111,7 +113,7 @@ public class BlockStateProcessor extends BaseProcessor {
         private final Boolean uvlock;
 
         public ModelJson(BlockState.Model model) {
-            this.model = !"".equals(model.value()) ? model.value() : null;
+            this.model = !"".equals(model.value()) ? withBlockInfix(model.value()) : null;
             this.x = model.x() != 0 ? model.x() : null;
             this.y = model.y() != 0 ? model.y() : null;
             this.uvlock = model.uvlock() ? model.uvlock() : null;

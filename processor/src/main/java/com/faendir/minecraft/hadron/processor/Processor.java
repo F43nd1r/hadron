@@ -84,7 +84,7 @@ public class Processor extends AbstractProcessor {
             BaseProcessor.AnnotatedElementSupplier supplier = new BaseProcessor.AnnotatedElementSupplier() {
                 @Override
                 public <T extends Annotation> Map<Element, T> getElementsAnnotatedWith(Class<T> clazz) {
-                    return elements.entries().stream().filter(e -> e.getValue().getMirror().getAnnotationType().toString().equals(clazz.getName()))
+                    return elements.entries().stream().filter(e -> e.getValue().getMirror().getAnnotationType().toString().equals(clazz.getName().replace('$', '.')))
                             .collect(Collectors.toMap(Map.Entry::getKey, e -> getAnnotationProxy(clazz, e.getValue())));
                 }
             };

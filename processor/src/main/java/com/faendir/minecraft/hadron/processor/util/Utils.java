@@ -74,6 +74,9 @@ public final class Utils {
     }
 
     public static String withBlockInfix(String id) {
+        if(id.contains("block/")) {
+            return id;
+        }
         id = ensureNameSpaced(id);
         int i = id.indexOf(':');
         return id.substring(0, i + 1) + "block/" + id.substring(i + 1);

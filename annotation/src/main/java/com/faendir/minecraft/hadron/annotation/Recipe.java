@@ -12,13 +12,26 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Recipe {
-    String[] pattern();
-    Key[] keys();
-    String id();
-    int count() default 1;
 
     @interface Key {
         String key();
         String value();
+    }
+
+    @Retention(RetentionPolicy.CLASS)
+    @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
+    @interface Shaped {
+        String[] pattern();
+        Key[] keys();
+        String id();
+        int count() default 1;
+    }
+
+    @Retention(RetentionPolicy.CLASS)
+    @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
+    @interface Shapeless {
+        String[] ingredients();
+        String id();
+        int count() default 1;
     }
 }

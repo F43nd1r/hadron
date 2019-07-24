@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Register(Block.class)
 @GenerateItem("{id}")
-@Recipe(
+@Recipe.Shaped(
         pattern = {"   ","   ","xxx"},
         keys = @Recipe.Key(key = "x", value = "{material}"),
         id = "{id}",
@@ -21,13 +21,13 @@ import java.lang.annotation.Target;
 )
 @BlockState(
         id = "{id}",
-        variants = {@BlockState.Variant(id = "type=bottom", model = @BlockState.Model("hadron:block/{id}")),
-                @BlockState.Variant(id = "type=top", model = @BlockState.Model(value = "hadron:block/{id}", x = 180, uvlock = true)),
+        variants = {@BlockState.Variant(id = "type=bottom", model = @BlockState.Model("{id}")),
+                @BlockState.Variant(id = "type=top", model = @BlockState.Model(value = "{id}", x = 180, uvlock = true)),
                 @BlockState.Variant(id = "type=double", model = @BlockState.Model(value = "{doubleModel}"))}
 )
 @Model(
         id = "{id}",
-        parent = "minecraft:block/slab",
+        parent = "minecraft:slab",
         textures = {@Model.Texture(key = "top", id = "{texture}"), @Model.Texture(key = "bottom", id = "{texture}"), @Model.Texture(key = "side", id = "{texture}")}
 )
 @Tag(
