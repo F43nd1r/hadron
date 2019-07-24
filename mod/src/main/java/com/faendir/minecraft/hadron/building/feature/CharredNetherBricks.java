@@ -8,6 +8,7 @@ import com.faendir.minecraft.hadron.annotation.GenerateWall;
 import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.annotation.Register;
+import com.faendir.minecraft.hadron.annotation.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 
@@ -22,7 +23,7 @@ public class CharredNetherBricks {
     @Register(Block.class)
     @Recipe.Shapeless(id = CHARRED_NETHER_BRICKS_ID, ingredients = {NETHER_BRICKS, NETHER_BRICKS, NETHER_BRICKS, "minecraft:fire_charge"}, count = 3)
     @BlockState(id = CHARRED_NETHER_BRICKS_ID, variants = @BlockState.Variant(id = "", model = @BlockState.Model(CHARRED_NETHER_BRICKS_ID)))
-    @Model(id = CHARRED_NETHER_BRICKS_ID, parent = "minecraft:cube_all", textures = @Model.Texture(key = "all", id = CHARRED_NETHER_BRICKS_ID))
+    @Model(id = CHARRED_NETHER_BRICKS_ID, parent = "minecraft:cube_all", textures = @Texture(key = "all", id = CHARRED_NETHER_BRICKS_ID))
     @GenerateItem(CHARRED_NETHER_BRICKS_ID)
     @GenerateStairs(id = CHARRED_NETHER_BRICKS_ID, texture = CHARRED_NETHER_BRICKS_ID)
     @GenerateSlabs(id = CHARRED_NETHER_BRICKS_ID, texture = CHARRED_NETHER_BRICKS_ID)

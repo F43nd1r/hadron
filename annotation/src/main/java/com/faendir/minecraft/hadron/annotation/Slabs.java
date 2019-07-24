@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 @Model(
         id = "{id}",
         parent = "minecraft:slab",
-        textures = {@Model.Texture(key = "top", id = "{texture}"), @Model.Texture(key = "bottom", id = "{texture}"), @Model.Texture(key = "side", id = "{texture}")}
+        textures = {@Texture(key = "top", id = "{texture}"), @Texture(key = "bottom", id = "{texture}"), @Texture(key = "side", id = "{texture}")}
 )
 @Tag(
         id = "{id}",

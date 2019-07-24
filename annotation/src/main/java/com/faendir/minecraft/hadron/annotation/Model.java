@@ -18,9 +18,4 @@ public @interface Model {
     String parent();
     Texture[] textures();
 
-    @interface Texture {
-        String key();
-        String id();
-    }
-
 }

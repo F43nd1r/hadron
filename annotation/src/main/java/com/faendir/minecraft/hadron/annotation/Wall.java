@@ -33,17 +33,17 @@ import java.lang.annotation.Target;
 @Model(
         id = "{id}_inventory",
         parent = "minecraft:wall_inventory",
-        textures = @Model.Texture(key = "wall", id = "{texture}")
+        textures = @Texture(key = "wall", id = "{texture}")
 )
 @Model(
         id = "{id}_post",
         parent = "minecraft:template_wall_post",
-        textures = @Model.Texture(key = "wall", id = "{texture}")
+        textures = @Texture(key = "wall", id = "{texture}")
 )
 @Model(
         id = "{id}_side",
         parent = "minecraft:template_wall_side",
-        textures = @Model.Texture(key = "wall", id = "{texture}")
+        textures = @Texture(key = "wall", id = "{texture}")
 )
 @Tag(
         id = "{id}",

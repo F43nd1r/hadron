@@ -2,6 +2,7 @@ package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Models;
+import com.faendir.minecraft.hadron.annotation.Texture;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.squareup.javapoet.TypeSpec;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.faendir.minecraft.hadron.processor.util.Utils.withBlockInfix;
+import static com.faendir.minecraft.hadron.processor.util.Utils.ensureInfix;
 
 /**
  * @author lukas
@@ -39,10 +40,10 @@ public class ModelProcessor extends BaseProcessor {
         private final Map<String, String> textures;
 
         private ModelJson(Model model) {
-            this.parent = withBlockInfix(model.parent());
+            this.parent = ensureInfix(model.parent());
             this.textures = new LinkedHashMap<>();
-            for (Model.Texture texture : model.textures()) {
-                textures.put(texture.key(), withBlockInfix(texture.id()));
+            for (Texture texture : model.textures()) {
+                textures.put(texture.key(), ensureInfix(texture.id()));
             }
         }
 

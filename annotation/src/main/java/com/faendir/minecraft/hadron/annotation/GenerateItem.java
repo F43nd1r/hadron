@@ -13,5 +13,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface GenerateItem {
     String value();
+
+    /**
+     * defaults to {@link #value()}
+     *
+     * @return the model parent
+     */
     String parent() default "";
+
+    String category() default "building_blocks";
+
+    Texture[] textures() default {};
 }

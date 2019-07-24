@@ -8,6 +8,7 @@ import com.faendir.minecraft.hadron.annotation.GenerateWall;
 import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.annotation.Register;
+import com.faendir.minecraft.hadron.annotation.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 
@@ -24,7 +25,7 @@ public class DuskBound {
             @Recipe.Key(key = "o", value = "minecraft:purpur_block")
     }, count = 16)
     @BlockState(id = DUSKBOUND_ID, variants = @BlockState.Variant(id = "", model = @BlockState.Model(DUSKBOUND_ID)))
-    @Model(id = DUSKBOUND_ID, parent = "minecraft:cube_all", textures = @Model.Texture(key = "all", id = DUSKBOUND_ID))
+    @Model(id = DUSKBOUND_ID, parent = "minecraft:cube_all", textures = @Texture(key = "all", id = DUSKBOUND_ID))
     @GenerateItem(DUSKBOUND_ID)
     @GenerateStairs(id = DUSKBOUND_ID, texture = DUSKBOUND_ID)
     @GenerateSlabs(id = DUSKBOUND_ID, texture = DUSKBOUND_ID)
@@ -38,7 +39,7 @@ public class DuskBound {
             @Recipe.Key(key = "o", value = "minecraft:ender_pearl")
     }, count = 4)
     @BlockState(id = DUSKBOUND_LANTERN_ID, variants = @BlockState.Variant(id = "", model = @BlockState.Model(DUSKBOUND_LANTERN_ID)))
-    @Model(id = DUSKBOUND_LANTERN_ID, parent = "minecraft:cube_all", textures = @Model.Texture(key = "all", id = DUSKBOUND_LANTERN_ID))
+    @Model(id = DUSKBOUND_LANTERN_ID, parent = "minecraft:cube_all", textures = @Texture(key = "all", id = DUSKBOUND_LANTERN_ID))
     @GenerateItem(DUSKBOUND_LANTERN_ID)
     public static final Block DUSKBOUND_LANTERN = new Block(Block.Properties.from(DUSKBOUND).lightValue(15)).setRegistryName(DUSKBOUND_LANTERN_ID);
 

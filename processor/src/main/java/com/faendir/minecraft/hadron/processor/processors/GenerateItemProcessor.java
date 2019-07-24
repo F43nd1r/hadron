@@ -2,6 +2,7 @@ package com.faendir.minecraft.hadron.processor.processors;
 
 import com.faendir.minecraft.hadron.annotation.GenerateItem;
 import com.faendir.minecraft.hadron.annotation.Register;
+import com.faendir.minecraft.hadron.annotation.Texture;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
@@ -14,9 +15,10 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.faendir.minecraft.hadron.processor.util.Utils.withBlockInfix;
+import static com.faendir.minecraft.hadron.processor.util.Utils.ensureInfix;
 
 /**
  * @author lukas
@@ -34,28 +36,37 @@ public class GenerateItemProcessor extends BaseProcessor {
             Element e = entry.getKey();
             GenerateItem generateItem = entry.getValue();
             String id = generateItem.value();
-            String parent = generateItem.parent();
-            if (parent.length() == 0) {
-                parent = id;
-            }
             registry.addField(FieldSpec.builder(Item.class, id.toUpperCase() + "_ITEM", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .addAnnotation(AnnotationSpec.builder(Register.class).addMember("value", "$T.class", Item.class).build())
-                    .initializer("new $T($T.$L, new $T().group($T.BUILDING_BLOCKS)).setRegistryName($S)", BlockItem.class, e.getEnclosingElement(), e, Item.Properties.class, ItemGroup.class, id)
+                    .initializer("new $T($T.$L, new $T().group($T.$L)).setRegistryName($S)", BlockItem.class, e.getEnclosingElement(), e, Item.Properties.class, ItemGroup.class, generateItem.category().toUpperCase(), id)
                     .build());
-            Utils.writeAsset(processingEnv.getFiler(), Utils.ITEM_MODELS, id, new ParentJson(withBlockInfix(parent)));
+            Utils.writeAsset(processingEnv.getFiler(), Utils.ITEM_MODELS, id, new ItemJson(generateItem));
 
         }
     }
 
-    private static class ParentJson {
+    private static class ItemJson {
         private final String parent;
+        private final Map<String, String> textures;
 
-        public ParentJson(String parent) {
-            this.parent = parent;
+        ItemJson(GenerateItem generateItem) {
+            String parent = generateItem.parent();
+            if (parent.length() == 0) {
+                parent = generateItem.value();
+            }
+            this.parent = ensureInfix(parent);
+            this.textures = new LinkedHashMap<>();
+            for (Texture texture : generateItem.textures()) {
+                textures.put(texture.key(), ensureInfix(texture.id()));
+            }
         }
 
         public String getParent() {
             return parent;
+        }
+
+        public Map<String, String> getTextures() {
+            return textures;
         }
     }
 }

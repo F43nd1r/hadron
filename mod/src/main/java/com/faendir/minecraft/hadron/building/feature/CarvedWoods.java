@@ -6,6 +6,7 @@ import com.faendir.minecraft.hadron.annotation.GenerateItem;
 import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.annotation.Register;
+import com.faendir.minecraft.hadron.annotation.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 
@@ -49,7 +50,7 @@ public class CarvedWoods {
     @Register(Block.class)
     @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4)
     @BlockState(id = "{id}", variants = @BlockState.Variant(id = "", model = @BlockState.Model("{id}")))
-    @Model(id = "{id}", parent = "minecraft:cube_all", textures = @Model.Texture(key = "all", id = "{texture}"))
+    @Model(id = "{id}", parent = "minecraft:cube_all", textures = @Texture(key = "all", id = "{texture}"))
     @GenerateItem("{id}")
     @Composite
     @Retention(RetentionPolicy.CLASS)

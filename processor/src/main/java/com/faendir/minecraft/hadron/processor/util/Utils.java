@@ -73,11 +73,11 @@ public final class Utils {
         return id;
     }
 
-    public static String withBlockInfix(String id) {
-        if(id.contains("block/")) {
+    public static String ensureInfix(String id) {
+        id = ensureNameSpaced(id);
+        if(id.contains("/")) {
             return id;
         }
-        id = ensureNameSpaced(id);
         int i = id.indexOf(':');
         return id.substring(0, i + 1) + "block/" + id.substring(i + 1);
     }
