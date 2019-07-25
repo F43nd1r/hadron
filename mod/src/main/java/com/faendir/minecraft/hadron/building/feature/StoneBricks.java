@@ -1,14 +1,8 @@
 package com.faendir.minecraft.hadron.building.feature;
 
-import com.faendir.minecraft.hadron.annotation.BlockState;
 import com.faendir.minecraft.hadron.annotation.Composite;
-import com.faendir.minecraft.hadron.annotation.GenerateItem;
-import com.faendir.minecraft.hadron.annotation.GenerateSlabs;
-import com.faendir.minecraft.hadron.annotation.GenerateStairs;
-import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Recipe;
-import com.faendir.minecraft.hadron.annotation.Register;
-import com.faendir.minecraft.hadron.annotation.Texture;
+import com.faendir.minecraft.hadron.base.HadronCube;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 
@@ -34,13 +28,8 @@ public class StoneBricks {
     @Brick(id = GRANITE_BRICKS_ID, texture = GRANITE_BRICKS_ID, material = "minecraft:polished_granite")
     public static final Block GRANITE_BRICKS = new Block(Block.Properties.from(Blocks.POLISHED_GRANITE)).setRegistryName(GRANITE_BRICKS_ID);
 
-    @Register(Block.class)
+    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}")
     @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4)
-    @BlockState(id = "{id}", variants = @BlockState.Variant(id = "", model = @BlockState.Model("{id}")))
-    @Model(id = "{id}", parent = "minecraft:cube_all", textures = @Texture(key = "all", id = "{texture}"))
-    @GenerateItem("{id}")
-    @GenerateStairs(id = "{id}", texture = "{texture}")
-    @GenerateSlabs(id = "{id}", texture = "{texture}")
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

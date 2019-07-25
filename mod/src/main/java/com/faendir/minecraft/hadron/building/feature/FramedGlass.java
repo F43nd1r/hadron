@@ -6,6 +6,7 @@ import com.faendir.minecraft.hadron.annotation.Model;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.annotation.Register;
 import com.faendir.minecraft.hadron.annotation.Texture;
+import com.faendir.minecraft.hadron.base.HadronCube;
 import com.faendir.minecraft.hadron.base.HadronPaneBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -18,14 +19,11 @@ import net.minecraft.block.GlassBlock;
 public class FramedGlass {
     private static final String FRAMED_GLASS_ID = "framed_glass";
     private static final String DECORATIONS = "decorations";
-    @Register(Block.class)
+    @HadronCube(id = FRAMED_GLASS_ID, texture = FRAMED_GLASS_ID)
     @Recipe.Shaped(id = FRAMED_GLASS_ID, pattern = {"gig", "igi", "gig"}, keys = {
             @Recipe.Key(key = "g", value = "minecraft:glass"),
             @Recipe.Key(key = "i", value = "minecraft:iron_ingot")
     }, count = 4)
-    @BlockState(id = FRAMED_GLASS_ID, variants = @BlockState.Variant(id = "", model = @BlockState.Model(FRAMED_GLASS_ID)))
-    @Model(id = FRAMED_GLASS_ID, parent = "minecraft:cube_all", textures = @Texture(key = "all", id = FRAMED_GLASS_ID))
-    @GenerateItem(value = FRAMED_GLASS_ID, category = DECORATIONS)
     public static final Block FRAMED_GLASS = new GlassBlock(Block.Properties.from(Blocks.GLASS)).setRegistryName(FRAMED_GLASS_ID);
 
     private static final String FRAMED_GLASS_PANE_ID = "framed_glass_pane";
@@ -37,6 +35,7 @@ public class FramedGlass {
     private static final String FRAMED_GLASS_PANE_SIDE_ALT = FRAMED_GLASS_PANE_ID + "_side_alt";
     private static final String PANE = "pane";
     private static final String EDGE = "edge";
+
     @Register(Block.class)
     @Recipe.Shaped(id = FRAMED_GLASS_PANE_ID, pattern = {"ggg", "ggg"}, keys = {
             @Recipe.Key(key = "g", value = FRAMED_GLASS_ID),
