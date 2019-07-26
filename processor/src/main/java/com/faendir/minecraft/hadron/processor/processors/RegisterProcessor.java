@@ -35,7 +35,7 @@ public class RegisterProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         Multimap<TypeName, Element> map = HashMultimap.create();
         for (Pair<Element, Register> entry : supplier.getElementsAnnotatedWith(Register.class)) {
             TypeName event;

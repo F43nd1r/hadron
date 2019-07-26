@@ -26,13 +26,13 @@ public class GenerateSlabsProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, GenerateSlabs> entry : supplier.getElementsAnnotatedWith(GenerateSlabs.class)) {
             Element e = entry.getKey();
             GenerateSlabs generateSlabs = entry.getValue();
             String slabId = noPlural(removeNameSpace(generateSlabs.id())) + "_slabs";
             String texture = generateSlabs.texture();
-            registry.addField(FieldSpec.builder(Block.class, slabId.toUpperCase(), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            modObjects.addField(FieldSpec.builder(Block.class, slabId.toUpperCase(), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .addAnnotation(AnnotationSpec.builder(Slabs.class)
                             .addMember("id", "$S", slabId)
                             .addMember("texture", "$S", texture)

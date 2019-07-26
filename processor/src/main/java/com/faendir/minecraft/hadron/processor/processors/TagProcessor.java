@@ -25,14 +25,14 @@ public class TagProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, Tag> e : supplier.getElementsAnnotatedWith(Tag.class)) {
             Tag tag = e.getValue();
             tags.put(tag.tag(), Utils.MOD_ID + ":" + tag.id());
         }
         if (roundEnv.processingOver()) {
             for (Map.Entry<String, Collection<String>> entry : tags.asMap().entrySet()) {
-                Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCK_TAGS, entry.getKey(), new TagJson(entry.getValue()));
+                Utils.writeAsset(processingEnv.getFiler(), Utils.AssetPath.BLOCK_TAGS, entry.getKey(), new TagJson(entry.getValue()));
             }
         }
     }

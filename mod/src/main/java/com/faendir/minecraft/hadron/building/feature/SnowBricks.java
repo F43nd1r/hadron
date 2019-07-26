@@ -11,7 +11,7 @@ import net.minecraft.block.Blocks;
  */
 public class SnowBricks {
     private static final String SNOW_BRICKS_ID = "snow_bricks";
-    @HadronCube.WithStairsSlabsAndWalls(id = SNOW_BRICKS_ID, texture = SNOW_BRICKS_ID)
-    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "minecraft:snow_block"), count = 4)
+    @HadronCube.WithStairsAndSlabs(id = SNOW_BRICKS_ID, texture = SNOW_BRICKS_ID)
+    @Recipe.Shaped(id = SNOW_BRICKS_ID, pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "minecraft:snow_block"), count = 4)
     public static final Block SNOW_BRICKS = new Block(Block.Properties.from(Blocks.SNOW_BLOCK)).setRegistryName(SNOW_BRICKS_ID);
 }

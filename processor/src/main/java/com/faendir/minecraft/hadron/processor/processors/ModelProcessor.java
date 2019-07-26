@@ -24,9 +24,9 @@ public class ModelProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, Model> model : supplier.getElementsAnnotatedWithRepeatable(Model.class, Model.Repeat.class)) {
-            Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCK_MODELS, model.getValue().id(), new ModelJson(model.getValue()));
+            Utils.writeAsset(processingEnv.getFiler(), Utils.AssetPath.BLOCK_MODELS, model.getValue().id(), new ModelJson(model.getValue()));
         }
     }
 

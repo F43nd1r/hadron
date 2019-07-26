@@ -32,16 +32,16 @@ public class GenerateItemProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, GenerateItem> entry : supplier.getElementsAnnotatedWith(GenerateItem.class)) {
             Element e = entry.getKey();
             GenerateItem generateItem = entry.getValue();
             String id = generateItem.value();
-            registry.addField(FieldSpec.builder(Item.class, id.toUpperCase() + "_ITEM", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            modObjects.addField(FieldSpec.builder(Item.class, id.toUpperCase() + "_ITEM", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .addAnnotation(AnnotationSpec.builder(Register.class).addMember("value", "$T.class", Item.class).build())
                     .initializer("new $T($T.$L, new $T().group($T.$L)).setRegistryName($S)", BlockItem.class, e.getEnclosingElement(), e, Item.Properties.class, ItemGroup.class, generateItem.category().toUpperCase(), id)
                     .build());
-            Utils.writeAsset(processingEnv.getFiler(), Utils.ITEM_MODELS, id, new ItemJson(generateItem));
+            Utils.writeAsset(processingEnv.getFiler(), Utils.AssetPath.ITEM_MODELS, id, new ItemJson(generateItem));
 
         }
     }

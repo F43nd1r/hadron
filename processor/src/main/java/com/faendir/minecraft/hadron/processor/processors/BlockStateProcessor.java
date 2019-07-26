@@ -27,10 +27,10 @@ public class BlockStateProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, BlockState> e : supplier.getElementsAnnotatedWith(BlockState.class)) {
             BlockState blockState = e.getValue();
-            Utils.writeAsset(processingEnv.getFiler(), Utils.BLOCKSTATES, blockState.id(), new BlockStateJson(blockState));
+            Utils.writeAsset(processingEnv.getFiler(), Utils.AssetPath.BLOCKSTATES, blockState.id(), new BlockStateJson(blockState));
         }
     }
 

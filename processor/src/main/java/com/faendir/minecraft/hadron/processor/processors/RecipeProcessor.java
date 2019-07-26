@@ -26,7 +26,7 @@ public class RecipeProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, Recipe.Shaped> pair : supplier.getElementsAnnotatedWithRepeatable(Recipe.Shaped.class, Recipe.Shaped.Repeat.class)) {
             Recipe.Shaped recipe = pair.getValue();
             Map<String, ItemJson> map = new HashMap<>();
@@ -34,12 +34,12 @@ public class RecipeProcessor extends BaseProcessor {
                 map.put(key.key(), new ItemJson(key.value(), 1));
             }
             ShapedRecipeJson json = new ShapedRecipeJson(recipe.pattern(), map, new ItemJson(ensureNameSpaced(recipe.id()), recipe.count()));
-            Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, count++ + recipe.id(), json);
+            Utils.writeAsset(processingEnv.getFiler(), Utils.AssetPath.RECIPES, count++ + recipe.id(), json);
         }
         for (Pair<Element, Recipe.Shapeless> pair : supplier.getElementsAnnotatedWithRepeatable(Recipe.Shapeless.class, Recipe.Shapeless.Repeat.class)) {
             Recipe.Shapeless recipe = pair.getValue();
             ShapelessRecipeJson json = new ShapelessRecipeJson(Stream.of(recipe.ingredients()).map(i -> new ItemJson(ensureNameSpaced(i), 1)).toArray(ItemJson[]::new), new ItemJson(ensureNameSpaced(recipe.id()), recipe.count()));
-            Utils.writeAsset(processingEnv.getFiler(), Utils.RECIPES, count++ + recipe.id(), json);
+            Utils.writeAsset(processingEnv.getFiler(), Utils.AssetPath.RECIPES, count++ + recipe.id(), json);
         }
     }
 

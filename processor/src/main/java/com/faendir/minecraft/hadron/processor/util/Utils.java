@@ -10,20 +10,43 @@ import javax.annotation.processing.Filer;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Calendar;
 
 /**
  * @author lukas
  * @since 01.07.19
  */
 public final class Utils {
+    public enum AssetPath {
+        BLOCKSTATES("assets.", ".blockstates"),
+        BLOCK_MODELS("assets.", ".models.block"),
+        ITEM_MODELS("assets.", ".models.item"),
+        BLOCK_TAGS("data.minecraft.tags.blocks"),
+        RECIPES("data.", ".recipes");
+        private final String prefix;
+        private final String suffix;
+        private final boolean containsModId;
+
+        AssetPath(String path) {
+            this(path, "", false);
+        }
+
+        AssetPath(String prefix, String suffix) {
+            this(prefix, suffix, true);
+        }
+
+        AssetPath(String prefix, String suffix, boolean containsModId) {
+            this.prefix = prefix;
+            this.suffix = suffix;
+            this.containsModId = containsModId;
+        }
+
+        public String getPath() {
+            return containsModId ? prefix + MOD_ID + suffix : prefix;
+        }
+    }
+
     public static final String PACKAGE = "com.faendir.minecraft.hadron.generated";
-    public static final String BLOCKSTATES = "assets.hadron.blockstates";
-    public static final String BLOCK_MODELS = "assets.hadron.models.block";
-    public static final String ITEM_MODELS = "assets.hadron.models.item";
-    public static final String BLOCK_TAGS = "data.minecraft.tags.blocks";
-    public static final String RECIPES = "data.hadron.recipes.generated";
-    public static final String MOD_ID = "hadron";
+    public static String MOD_ID = "mod_id_not_found";
 
     private Utils() {
     }
@@ -32,21 +55,12 @@ public final class Utils {
         JavaFile.builder(PACKAGE, typeSpec)
                 .skipJavaLangImports(true)
                 .indent("    ")
-                .addFileComment("Copyright (c) " + Calendar.getInstance().get(Calendar.YEAR) + "\n\n" +
-                        "Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
-                        "you may not use this file except in compliance with the License.\n\n" +
-                        "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
-                        "Unless required by applicable law or agreed to in writing, software\n" +
-                        "distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
-                        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
-                        "See the License for the specific language governing permissions and\n" +
-                        "limitations under the License.")
                 .build()
                 .writeTo(filer);
     }
 
-    public static void writeAsset(Filer filer, String path, String name, Object object) throws IOException {
-        try (Writer writer = filer.createResource(StandardLocation.CLASS_OUTPUT, path, name + ".json")
+    public static void writeAsset(Filer filer, AssetPath path, String name, Object object) throws IOException {
+        try (Writer writer = filer.createResource(StandardLocation.CLASS_OUTPUT, path.getPath(), name + ".json")
                 .openWriter()) {
             new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                     .writeValue(writer, object);
@@ -75,7 +89,7 @@ public final class Utils {
 
     public static String ensureInfix(String id) {
         id = ensureNameSpaced(id);
-        if(id.contains("/")) {
+        if (id.contains("/")) {
             return id;
         }
         int i = id.indexOf(':');

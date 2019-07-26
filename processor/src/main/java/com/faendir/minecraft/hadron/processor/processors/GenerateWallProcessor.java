@@ -26,13 +26,13 @@ public class GenerateWallProcessor extends BaseProcessor {
     }
 
     @Override
-    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder registry) throws Exception {
+    public void process(AnnotatedElementSupplier supplier, RoundEnvironment roundEnv, TypeSpec.Builder modObjects) throws Exception {
         for (Pair<Element, GenerateWall> entry : supplier.getElementsAnnotatedWith(GenerateWall.class)) {
             Element e = entry.getKey();
             GenerateWall generateWall = entry.getValue();
             String wallId = noPlural(removeNameSpace(generateWall.id())) + "_wall";
             String texture = generateWall.texture();
-            registry.addField(FieldSpec.builder(Block.class, wallId.toUpperCase(), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+            modObjects.addField(FieldSpec.builder(Block.class, wallId.toUpperCase(), Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                     .addAnnotation(AnnotationSpec.builder(Wall.class)
                             .addMember("id", "$S", wallId)
                             .addMember("texture", "$S", texture)

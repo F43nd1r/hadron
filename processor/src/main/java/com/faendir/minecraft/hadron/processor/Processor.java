@@ -11,12 +11,13 @@ import com.faendir.minecraft.hadron.processor.processors.ModelProcessor;
 import com.faendir.minecraft.hadron.processor.processors.RecipeProcessor;
 import com.faendir.minecraft.hadron.processor.processors.RegisterProcessor;
 import com.faendir.minecraft.hadron.processor.processors.TagProcessor;
+import com.faendir.minecraft.hadron.processor.util.ExpandedAnnotationMirror;
 import com.faendir.minecraft.hadron.processor.util.Utils;
 import com.google.auto.service.AutoService;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.squareup.javapoet.TypeSpec;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -35,19 +36,11 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.AbstractAnnotationValueVisitor8;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author lukas
@@ -83,34 +76,8 @@ public class Processor extends AbstractProcessor {
                     buildAnnotationList(e).forEach(a -> elements.put(e, a));
                 }
             }
-            BaseProcessor.AnnotatedElementSupplier supplier = new BaseProcessor.AnnotatedElementSupplier() {
-                @Override
-                public <T extends Annotation> List<Pair<Element, T>> getElementsAnnotatedWith(Class<T> clazz) {
-                    return elements.entries().stream().filter(e -> e.getValue().getMirror().getAnnotationType().toString().equals(clazz.getName().replace('$', '.')))
-                            .map(e -> Pair.of(e.getKey(), getAnnotationProxy(clazz, e.getValue())))
-                            .collect(Collectors.toList());
-                }
-
-                @Override
-                public <T extends Annotation, U extends Annotation> List<Pair<Element, T>> getElementsAnnotatedWithRepeatable(Class<T> clazz, Class<U> repeatable) {
-                    Method valueMethod;
-                    try {
-                        valueMethod = repeatable.getMethod("value");
-                    } catch (NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return Stream.concat(getElementsAnnotatedWith(clazz).stream().map(e -> Pair.of(e.getKey(), e.getValue())),
-                            getElementsAnnotatedWith(repeatable).stream().flatMap(e -> {
-                                try {
-                                    //noinspection unchecked
-                                    return Stream.of((T[]) valueMethod.invoke(e.getValue())).map(v -> Pair.of(e.getKey(), v));
-                                } catch (IllegalAccessException | InvocationTargetException ex) {
-                                    ex.printStackTrace();
-                                    return Stream.empty();
-                                }
-                            })).collect(Collectors.toList());
-                }
-            };
+            BaseProcessor.AnnotatedElementSupplier supplier = new BaseProcessor.AnnotatedElementSupplier(processingEnv, elements);
+            supplier.getElementsAnnotatedWith(Mod.class).stream().findAny().ifPresent(p -> Utils.MOD_ID = p.getValue().value());
             TypeSpec.Builder registry = TypeSpec.classBuilder("ModObjects" + count++).addModifiers(Modifier.PUBLIC);
             for (BaseProcessor processor : processors) {
                 processor.process(supplier, roundEnv, registry);
@@ -125,15 +92,12 @@ public class Processor extends AbstractProcessor {
         return false;
     }
 
-    private static <T extends Annotation> T getAnnotationProxy(Class<T> clazz, ExpandedAnnotationMirror mirror) {
-        return getAnnotationProxy(clazz, mirror.getOwner().getAnnotation(clazz), mirror);
-    }
-
-    private static <T extends Annotation> T getAnnotationProxy(Class<T> clazz, T annotation, ExpandedAnnotationMirror mirror) {
-        return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new AnnotationInvocationHandler<>(annotation, mirror.getReplacements())));
-    }
-
+    /**
+     * Find all annotations on the given element and expand composite annotations
+     *
+     * @param e the element
+     * @return all annotations, including those only present on composites
+     */
     private List<ExpandedAnnotationMirror> buildAnnotationList(Element e) {
         List<ExpandedAnnotationMirror> result = new ArrayList<>();
         for (AnnotationMirror process : e.getAnnotationMirrors()) {
@@ -153,6 +117,12 @@ public class Processor extends AbstractProcessor {
         return result;
     }
 
+    /**
+     * replace placeholders with their value
+     *
+     * @param replacements applicable replacements
+     * @param expand the annotation to expand
+     */
     private void expand(Map<String, String> replacements, ExpandedAnnotationMirror expand) {
         outer:
         for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : expand.getMirror().getElementValues().entrySet()) {
@@ -171,6 +141,7 @@ public class Processor extends AbstractProcessor {
             } else if (method.getReturnType().getKind() == TypeKind.ARRAY) {
                 TypeMirror componentType = ((ArrayType) method.getReturnType()).getComponentType();
                 if (componentType.toString().equals(String.class.getName())) {
+                    //noinspection unchecked
                     List<AnnotationValue> s = (List<AnnotationValue>) value.getValue();
                     String[] out = new String[s.size()];
                     for (int i = 0; i < out.length; i++) {
@@ -178,6 +149,7 @@ public class Processor extends AbstractProcessor {
                     }
                     expand.putReplacement(methodName, out);
                 } else if (componentType.getKind() == TypeKind.DECLARED) {
+                    //noinspection unchecked
                     List<AnnotationValue> s = (List<AnnotationValue>) value.getValue();
                     ExpandedAnnotationMirror[] out = new ExpandedAnnotationMirror[s.size()];
                     for (int i = 0; i < out.length; i++) {
@@ -196,6 +168,13 @@ public class Processor extends AbstractProcessor {
         }
     }
 
+    /**
+     * apply all replacements to a given string
+     *
+     * @param replacements the replacements
+     * @param s the string
+     * @return the string with all replacements applied
+     */
     private String doExpand(Map<String, String> replacements, String s) {
         for (Map.Entry<String, String> replacement : replacements.entrySet()) {
             s = s.replace(replacement.getKey(), replacement.getValue());
@@ -203,6 +182,12 @@ public class Processor extends AbstractProcessor {
         return s;
     }
 
+    /**
+     * try to get an annotation mirror from a given annotation value
+     *
+     * @param value the value
+     * @return an annotation mirror, or null if the value has another type
+     */
     private AnnotationMirror tryGetAnnotationMirror(AnnotationValue value) {
         return new AbstractAnnotationValueVisitor8<AnnotationMirror, Void>() {
             @Override
@@ -270,74 +255,5 @@ public class Processor extends AbstractProcessor {
                 return null;
             }
         }.visit(value);
-    }
-
-    private static class ExpandedAnnotationMirror {
-        private final AnnotationMirror mirror;
-        private final Element owner;
-        private final Map<String, Object> replacements;
-
-        private ExpandedAnnotationMirror(AnnotationMirror mirror, Element owner) {
-            this.mirror = mirror;
-            this.owner = owner;
-            this.replacements = new HashMap<>();
-        }
-
-        void putReplacement(String method, Object value) {
-            replacements.put(method, value);
-        }
-
-        AnnotationMirror getMirror() {
-            return mirror;
-        }
-
-        public Element getOwner() {
-            return owner;
-        }
-
-        Map<String, Object> getReplacements() {
-            return replacements;
-        }
-    }
-
-    private static class AnnotationInvocationHandler<T> implements InvocationHandler {
-
-        private final T annotation;
-        private final Map<String, Object> replacements;
-
-        AnnotationInvocationHandler(T annotation, Map<String, Object> replacements) {
-            this.annotation = annotation;
-            this.replacements = replacements;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (replacements.containsKey(method.getName())) {
-                Object result = replacements.get(method.getName());
-                if (result instanceof ExpandedAnnotationMirror) {
-                    Annotation original = (Annotation) getOriginal(method, args);
-                    result = getAnnotationProxy((Class<Annotation>) method.getReturnType(), original, (ExpandedAnnotationMirror) result);
-                } else if (result instanceof ExpandedAnnotationMirror[]) {
-                    Annotation[] original = (Annotation[]) getOriginal(method, args);
-                    ExpandedAnnotationMirror[] mirrors = (ExpandedAnnotationMirror[]) result;
-                    Annotation[] out = (Annotation[]) Array.newInstance(method.getReturnType().getComponentType(), original.length);
-                    for (int i = 0; i < original.length; i++) {
-                        out[i] = getAnnotationProxy((Class<Annotation>) ((Class<Annotation[]>) method.getReturnType()).getComponentType(), original[i], mirrors[i]);
-                    }
-                    result = out;
-                }
-                return result;
-            } else {
-                return getOriginal(method, args);
-            }
-        }
-
-        private Object getOriginal(Method method, Object[] args) throws Throwable {
-            try {
-                return method.invoke(annotation, args);
-            } catch (InvocationTargetException e) {
-                throw e.getTargetException();
-            }
-        }
     }
 }
