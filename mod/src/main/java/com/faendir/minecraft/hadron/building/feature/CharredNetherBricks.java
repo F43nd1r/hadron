@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.base.HadronCube;
 import net.minecraft.block.Block;
@@ -12,8 +13,9 @@ import net.minecraft.block.Blocks;
 public class CharredNetherBricks {
     private static final String CHARRED_NETHER_BRICKS_ID = "charred_nether_bricks";
     private static final String NETHER_BRICKS = "minecraft:nether_bricks";
+    private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".CharredNetherBricks";
 
-    @HadronCube.WithStairsSlabsAndWalls(id = CHARRED_NETHER_BRICKS_ID, texture = CHARRED_NETHER_BRICKS_ID)
-    @Recipe.Shapeless(id = CHARRED_NETHER_BRICKS_ID, ingredients = {NETHER_BRICKS, NETHER_BRICKS, NETHER_BRICKS, "minecraft:fire_charge"}, count = 3)
+    @HadronCube.WithStairsSlabsAndWalls(id = CHARRED_NETHER_BRICKS_ID, texture = CHARRED_NETHER_BRICKS_ID, configPath = CONFIG_PATH)
+    @Recipe.Shapeless(id = CHARRED_NETHER_BRICKS_ID, ingredients = {NETHER_BRICKS, NETHER_BRICKS, NETHER_BRICKS, "minecraft:fire_charge"}, count = 3, configPath = CONFIG_PATH)
     public static final Block CHARRED_NETHER_BRICKS = new Block(Block.Properties.from(Blocks.NETHER_BRICKS)).setRegistryName(CHARRED_NETHER_BRICKS_ID);
 }

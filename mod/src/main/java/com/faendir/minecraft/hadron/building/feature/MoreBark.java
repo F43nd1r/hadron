@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.Composite;
 import com.faendir.minecraft.hadron.annotation.GenerateSlabs;
 import com.faendir.minecraft.hadron.annotation.GenerateStairs;
@@ -35,9 +36,11 @@ public class MoreBark {
     @Bark(id = "minecraft:dark_oak_wood", texture = "minecraft:dark_oak_log")
     public static final Block DARK_OAK_BARK = Blocks.DARK_OAK_WOOD;
 
-    @GenerateStairs(id = "{id}", texture = "{texture}")
-    @GenerateSlabs(id = "{id}", texture = "{texture}")
-    @GenerateWall(id = "{id}", texture = "{texture}")
+    private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".MoreBark";
+
+    @GenerateStairs(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
+    @GenerateSlabs(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
+    @GenerateWall(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

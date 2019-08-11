@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 @Register(Block.class)
 @BlockState(id = "{id}", variants = @BlockState.Variant(id = "", model = @BlockState.Model("{id}")))
 @Model(id = "{id}", parent = "minecraft:cube_all", textures = @Texture(key = "all", id = "{texture}"))
-@GenerateItem("{id}")
+@GenerateItem(value = "{id}", configPath = "{configPath}")
 @Composite
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
@@ -32,9 +32,11 @@ public @interface HadronCube {
 
     String texture();
 
-    @HadronCube(id = "{id}", texture = "{texture}")
-    @GenerateStairs(id = "{id}", texture = "{texture}")
-    @GenerateSlabs(id = "{id}", texture = "{texture}")
+    String configPath() default "";
+
+    @HadronCube(id = "{id}", texture = "{texture}", configPath = "{configPath}")
+    @GenerateStairs(id = "{id}", texture = "{texture}", configPath = "{configPath}")
+    @GenerateSlabs(id = "{id}", texture = "{texture}", configPath = "{configPath}")
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
@@ -42,11 +44,13 @@ public @interface HadronCube {
         String id();
 
         String texture();
+
+        String configPath() default "";
     }
 
 
-    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}")
-    @GenerateWall(id = "{id}", texture = "{texture}")
+    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}", configPath = "{configPath}")
+    @GenerateWall(id = "{id}", texture = "{texture}", configPath = "{configPath}")
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
@@ -54,5 +58,7 @@ public @interface HadronCube {
         String id();
 
         String texture();
+
+        String configPath() default "";
     }
 }

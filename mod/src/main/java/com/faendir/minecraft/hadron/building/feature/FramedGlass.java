@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.BlockState;
 import com.faendir.minecraft.hadron.annotation.GenerateItem;
 import com.faendir.minecraft.hadron.annotation.Model;
@@ -17,13 +18,14 @@ import net.minecraft.block.GlassBlock;
  * @since 24.07.19
  */
 public class FramedGlass {
+    private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".FramedGlass";
     private static final String FRAMED_GLASS_ID = "framed_glass";
     private static final String DECORATIONS = "decorations";
-    @HadronCube(id = FRAMED_GLASS_ID, texture = FRAMED_GLASS_ID)
+    @HadronCube(id = FRAMED_GLASS_ID, texture = FRAMED_GLASS_ID, configPath = CONFIG_PATH)
     @Recipe.Shaped(id = FRAMED_GLASS_ID, pattern = {"gig", "igi", "gig"}, keys = {
             @Recipe.Key(key = "g", value = "minecraft:glass"),
             @Recipe.Key(key = "i", value = "minecraft:iron_ingot")
-    }, count = 4)
+    }, count = 4, configPath = CONFIG_PATH)
     public static final Block FRAMED_GLASS = new GlassBlock(Block.Properties.from(Blocks.GLASS)).setRegistryName(FRAMED_GLASS_ID);
 
     private static final String FRAMED_GLASS_PANE_ID = "framed_glass_pane";
@@ -39,7 +41,7 @@ public class FramedGlass {
     @Register(Block.class)
     @Recipe.Shaped(id = FRAMED_GLASS_PANE_ID, pattern = {"ggg", "ggg"}, keys = {
             @Recipe.Key(key = "g", value = FRAMED_GLASS_ID),
-    }, count = 16)
+    }, count = 16, configPath = CONFIG_PATH)
     @BlockState(id = FRAMED_GLASS_PANE_ID, multipart = {
             @BlockState.Multipart(apply = @BlockState.Model(FRAMED_GLASS_PANE_POST)),
             @BlockState.Multipart(when = @BlockState.Conditions(@BlockState.Condition(name = "north", value = "true")), apply = @BlockState.Model(FRAMED_GLASS_PANE_SIDE)),
@@ -65,6 +67,6 @@ public class FramedGlass {
             @Texture(key = PANE, id = FRAMED_GLASS_ID),
             @Texture(key = EDGE, id = FRAMED_GLASS_PANE_TOP)
     })
-    @GenerateItem(value = FRAMED_GLASS_PANE_ID, category = DECORATIONS, parent = "minecraft:item/generated", textures = @Texture(key = "layer0", id = FRAMED_GLASS_ID))
+    @GenerateItem(value = FRAMED_GLASS_PANE_ID, category = DECORATIONS, parent = "minecraft:item/generated", textures = @Texture(key = "layer0", id = FRAMED_GLASS_ID), configPath = CONFIG_PATH)
     public static final Block FRAMED_GLASS_PANE = new HadronPaneBlock(Block.Properties.from(Blocks.GLASS_PANE)).setRegistryName(FRAMED_GLASS_PANE_ID);
 }

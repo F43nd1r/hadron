@@ -38,6 +38,7 @@ public class GenerateSlabsProcessor extends BaseProcessor {
                             .addMember("texture", "$S", texture)
                             .addMember("material", "$S", ensureNameSpaced(generateSlabs.id()))
                             .addMember("doubleModel", "$S", ensureInfix(generateSlabs.id()))
+                            .addMember("configPath", "$S", generateSlabs.configPath())
                             .build())
                     .initializer("new $T($T.from($T.$L)).setRegistryName($S)", SlabBlock.class, Block.Properties.class, e.getEnclosingElement(), e, slabId)
                     .build());

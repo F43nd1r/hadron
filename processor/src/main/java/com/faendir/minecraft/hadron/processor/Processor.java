@@ -3,10 +3,12 @@ package com.faendir.minecraft.hadron.processor;
 import com.faendir.minecraft.hadron.annotation.Composite;
 import com.faendir.minecraft.hadron.processor.processors.BaseProcessor;
 import com.faendir.minecraft.hadron.processor.processors.BlockStateProcessor;
+import com.faendir.minecraft.hadron.processor.processors.ConfigEnabledProcessor;
 import com.faendir.minecraft.hadron.processor.processors.GenerateItemProcessor;
 import com.faendir.minecraft.hadron.processor.processors.GenerateSlabsProcessor;
 import com.faendir.minecraft.hadron.processor.processors.GenerateStairsProcessor;
 import com.faendir.minecraft.hadron.processor.processors.GenerateWallProcessor;
+import com.faendir.minecraft.hadron.processor.processors.ModProcessor;
 import com.faendir.minecraft.hadron.processor.processors.ModelProcessor;
 import com.faendir.minecraft.hadron.processor.processors.RecipeProcessor;
 import com.faendir.minecraft.hadron.processor.processors.RegisterProcessor;
@@ -17,7 +19,6 @@ import com.google.auto.service.AutoService;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.squareup.javapoet.TypeSpec;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -39,6 +40,7 @@ import javax.lang.model.util.AbstractAnnotationValueVisitor8;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,8 @@ public class Processor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
+        //mod processor has to run first
+        processors.add(new ModProcessor(processingEnv));
         processors.add(new RegisterProcessor(processingEnv));
         processors.add(new GenerateItemProcessor(processingEnv));
         processors.add(new RecipeProcessor(processingEnv));
@@ -65,6 +69,7 @@ public class Processor extends AbstractProcessor {
         processors.add(new GenerateStairsProcessor(processingEnv));
         processors.add(new GenerateWallProcessor(processingEnv));
         processors.add(new TagProcessor(processingEnv));
+        processors.add(new ConfigEnabledProcessor(processingEnv));
     }
 
     @Override
@@ -77,7 +82,6 @@ public class Processor extends AbstractProcessor {
                 }
             }
             BaseProcessor.AnnotatedElementSupplier supplier = new BaseProcessor.AnnotatedElementSupplier(processingEnv, elements);
-            supplier.getElementsAnnotatedWith(Mod.class).stream().findAny().ifPresent(p -> Utils.MOD_ID = p.getValue().value());
             TypeSpec.Builder registry = TypeSpec.classBuilder("ModObjects" + count++).addModifiers(Modifier.PUBLIC);
             for (BaseProcessor processor : processors) {
                 processor.process(supplier, roundEnv, registry);
@@ -101,10 +105,13 @@ public class Processor extends AbstractProcessor {
     private List<ExpandedAnnotationMirror> buildAnnotationList(Element e) {
         List<ExpandedAnnotationMirror> result = new ArrayList<>();
         for (AnnotationMirror process : e.getAnnotationMirrors()) {
+            if(process.getAnnotationType().toString().startsWith("java.lang") || process.getAnnotationType().toString().equals(Composite.class.getName())) {
+                continue;
+            }
             result.add(new ExpandedAnnotationMirror(process, e));
             Element processElement = processingEnv.getTypeUtils().asElement(process.getAnnotationType());
             if (processElement.getAnnotation(Composite.class) != null) {
-                Map<String, String> replacements = process.getElementValues().entrySet().stream()
+                Map<String, String> replacements = processingEnv.getElementUtils().getElementValuesWithDefaults(process).entrySet().stream()
                         .filter(entry -> entry.getKey().getReturnType().toString().equals(String.class.getName()))
                         .collect(Collectors.toMap(entry -> "{" + entry.getKey().getSimpleName() + "}", entry -> (String) entry.getValue().getValue()));
                 List<ExpandedAnnotationMirror> toExpand = buildAnnotationList(processElement);
@@ -124,17 +131,16 @@ public class Processor extends AbstractProcessor {
      * @param expand the annotation to expand
      */
     private void expand(Map<String, String> replacements, ExpandedAnnotationMirror expand) {
-        outer:
-        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : expand.getMirror().getElementValues().entrySet()) {
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : processingEnv.getElementUtils().getElementValuesWithDefaults(expand.getMirror()).entrySet()) {
             ExecutableElement method = entry.getKey();
             AnnotationValue value = entry.getValue();
             String methodName = method.getSimpleName().toString();
             if (method.getReturnType().toString().equals(String.class.getName())) {
-                expand.putReplacement(methodName, doExpand(replacements, (String) value.getValue()));
+                expand.putReplacement(methodName, doExpand(replacements, expand.getReplacement(methodName, (String) value.getValue())));
             } else if (method.getReturnType().getKind() == TypeKind.DECLARED) {
                 AnnotationMirror mirror = tryGetAnnotationMirror(value);
                 if (mirror != null) {
-                    ExpandedAnnotationMirror child = new ExpandedAnnotationMirror(mirror, expand.getOwner());
+                    ExpandedAnnotationMirror child = expand.getReplacement(methodName, new ExpandedAnnotationMirror(mirror, expand.getOwner()));
                     expand(replacements, child);
                     expand.putReplacement(methodName, child);
                 }
@@ -143,24 +149,23 @@ public class Processor extends AbstractProcessor {
                 if (componentType.toString().equals(String.class.getName())) {
                     //noinspection unchecked
                     List<AnnotationValue> s = (List<AnnotationValue>) value.getValue();
-                    String[] out = new String[s.size()];
+                    String[] out = expand.getReplacement(methodName, s.stream().map(a -> (String) a.getValue()).toArray(String[]::new));
                     for (int i = 0; i < out.length; i++) {
-                        out[i] = doExpand(replacements, (String) s.get(i).getValue());
+                        out[i] = doExpand(replacements, out[i]);
                     }
                     expand.putReplacement(methodName, out);
                 } else if (componentType.getKind() == TypeKind.DECLARED) {
                     //noinspection unchecked
                     List<AnnotationValue> s = (List<AnnotationValue>) value.getValue();
-                    ExpandedAnnotationMirror[] out = new ExpandedAnnotationMirror[s.size()];
-                    for (int i = 0; i < out.length; i++) {
-                        AnnotationMirror mirror = tryGetAnnotationMirror(s.get(i));
+                    ExpandedAnnotationMirror[] out = expand.getReplacement(methodName, s.stream().map(a -> {
+                        AnnotationMirror mirror = tryGetAnnotationMirror(a);
                         if (mirror != null) {
-                            ExpandedAnnotationMirror child = new ExpandedAnnotationMirror(mirror, expand.getOwner());
-                            expand(replacements, child);
-                            out[i] = child;
-                        } else {
-                            continue outer;
+                            return new ExpandedAnnotationMirror(mirror, expand.getOwner());
                         }
+                        return null;
+                    }).filter(Objects::nonNull).toArray(ExpandedAnnotationMirror[]::new));
+                    for (ExpandedAnnotationMirror mirror : out) {
+                        expand(replacements, mirror);
                     }
                     expand.putReplacement(methodName, out);
                 }

@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.Composite;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.base.HadronCube;
@@ -81,11 +82,12 @@ public class QuiltedWool {
     public static final Block BLACK_QUILTED_WOOL = new Block(Block.Properties.from(Blocks.BLACK_WOOL)).setRegistryName(BLACK_QUILTED_WOOL_ID);
 
 
-    @HadronCube(id = "{id}", texture = "{texture}")
+    private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".QuiltedWool";
+    @HadronCube(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
     @Recipe.Shaped(id = "{id}", pattern = {"s", "xxx", "s"}, keys = {
             @Recipe.Key(key = "x", value = "{material}"),
             @Recipe.Key(key = "s", value = "minecraft:string")
-    }, count = 4)
+    }, count = 4, configPath = CONFIG_PATH)
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.Composite;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.base.HadronCube;
@@ -28,8 +29,10 @@ public class StoneBricks {
     @Brick(id = GRANITE_BRICKS_ID, texture = GRANITE_BRICKS_ID, material = "minecraft:polished_granite")
     public static final Block GRANITE_BRICKS = new Block(Block.Properties.from(Blocks.POLISHED_GRANITE)).setRegistryName(GRANITE_BRICKS_ID);
 
-    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}")
-    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4)
+    private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".StoneBricks";
+
+    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
+    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4, configPath = CONFIG_PATH)
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.Composite;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.base.HadronCube;
@@ -85,9 +86,10 @@ public class TerracottaShingles {
     @Shingles(id = BLACK_TERRACOTTA_SHINGLES_ID, texture = BLACK_TERRACOTTA_SHINGLES_ID, material = "minecraft:black_terracotta")
     public static final Block BLACK_TERRACOTTA_SHINGLES = new Block(Block.Properties.from(Blocks.BLACK_TERRACOTTA)).setRegistryName(BLACK_TERRACOTTA_SHINGLES_ID);
 
+    private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".NetherWrought";
 
-    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}")
-    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4)
+    @HadronCube.WithStairsAndSlabs(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
+    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4, configPath = CONFIG_PATH)
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

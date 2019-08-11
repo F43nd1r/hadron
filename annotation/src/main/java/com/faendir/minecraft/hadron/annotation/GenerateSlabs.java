@@ -13,5 +13,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface GenerateSlabs {
     String id();
+
     String texture();
+
+    String configPath() default "";
 }

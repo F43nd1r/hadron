@@ -16,6 +16,7 @@ import java.io.Writer;
  * @since 01.07.19
  */
 public final class Utils {
+
     public enum AssetPath {
         BLOCKSTATES("assets.", ".blockstates"),
         BLOCK_MODELS("assets.", ".models.block"),
@@ -46,6 +47,7 @@ public final class Utils {
     }
 
     public static final String PACKAGE = "com.faendir.minecraft.hadron.generated";
+    public static final String CONFIG = "config";
     public static String MOD_ID = "mod_id_not_found";
 
     private Utils() {
@@ -102,4 +104,17 @@ public final class Utils {
         }
         return s;
     }
+
+    public static String firstToUpper(String s) {
+        return s.length() == 0 ? s : s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+
+    public static String getConfigHolderName() {
+        return firstToUpper(MOD_ID) + "ConfigHolder";
+    }
+
+    public static String getConfigEventName() {
+        return firstToUpper(MOD_ID) + "ConfigCreationEvent";
+    }
+
 }

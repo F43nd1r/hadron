@@ -24,6 +24,11 @@ public class ExpandedAnnotationMirror {
         replacements.put(method, value);
     }
 
+    public <T> T getReplacement(String method, T defaultValue) {
+        //noinspection unchecked
+        return (T) replacements.getOrDefault(method, defaultValue);
+    }
+
     public AnnotationMirror getMirror() {
         return mirror;
     }
@@ -34,5 +39,15 @@ public class ExpandedAnnotationMirror {
 
     Map<String, Object> getReplacements() {
         return replacements;
+    }
+
+    @Override
+    public String toString() {
+        String s = mirror.toString();
+        for (Map.Entry<String, Object> e : replacements.entrySet()) {
+            String replacement = e.getKey() + "=" + (e.getValue() instanceof String ? "\"" + e.getValue() + "\"" : e.getValue());
+            s = s.replaceAll(e.getKey() + "=\"[^\"]*\"", replacement);
+        }
+        return s;
     }
 }

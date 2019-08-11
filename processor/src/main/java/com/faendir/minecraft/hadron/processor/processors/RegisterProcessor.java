@@ -46,7 +46,7 @@ public class RegisterProcessor extends BaseProcessor {
             }
             map.put(event, entry.getKey());
         }
-        if(!map.isEmpty()) {
+        if (!map.isEmpty()) {
             TypeSpec.Builder builder = TypeSpec.classBuilder("Registry" + count++)
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(AnnotationSpec.builder(Mod.EventBusSubscriber.class).addMember("modid", "$S", Utils.MOD_ID).addMember("bus", "$T.MOD", Mod.EventBusSubscriber.Bus.class).build());

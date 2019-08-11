@@ -24,4 +24,6 @@ public @interface GenerateItem {
     String category() default "building_blocks";
 
     Texture[] textures() default {};
+
+    String configPath() default "";
 }

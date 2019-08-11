@@ -14,13 +14,15 @@ import java.lang.annotation.Target;
 @Register(Block.class)
 @GenerateItem(
         value = "{id}",
-        parent = "{id}_inventory"
+        parent = "{id}_inventory",
+        configPath = "{configPath}"
 )
 @Recipe.Shaped(
         pattern = {"   ","xxx","xxx"},
         keys = @Recipe.Key(key = "x", value = "{material}"),
         id = "{id}",
-        count = 6
+        count = 6,
+        configPath = "{configPath}"
 )
 @BlockState(
         id = "{id}",
@@ -54,6 +56,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Wall {
     String id();
+
     String texture();
+
     String material();
+
+    String configPath() default "";
 }

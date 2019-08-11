@@ -27,6 +27,7 @@ public @interface Recipe {
         Key[] keys();
         String id();
         int count() default 1;
+        String configPath() default "";
 
         @Retention(RetentionPolicy.CLASS)
         @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
@@ -42,6 +43,7 @@ public @interface Recipe {
         String[] ingredients();
         String id();
         int count() default 1;
+        String configPath() default "";
 
         @Retention(RetentionPolicy.CLASS)
         @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

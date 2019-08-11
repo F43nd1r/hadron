@@ -1,12 +1,20 @@
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'maven-publish'
+apply plugin: 'idea'
 
 version = '1.0'
 group = 'com.faendir.minecraft' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'hadron'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+idea {
+    module {
+        sourceDirs += file('build/classes/java/main')
+        generatedSourceDirs += file('build/classes/java/main')
+    }
+}
 
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -48,6 +56,9 @@ dependencies {
     minecraft "net.minecraftforge:forge:$forgeVersion"
     compileOnly project(":annotation")
     annotationProcessor project(":processor")
+    /*implementation (project(":common")) {
+        exclude group:"net.minecraftforge"
+    }*/
 
 }
 

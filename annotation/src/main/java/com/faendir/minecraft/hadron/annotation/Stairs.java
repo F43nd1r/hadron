@@ -12,12 +12,13 @@ import java.lang.annotation.Target;
  * @since 21.07.19
  */
 @Register(Block.class)
-@GenerateItem("{id}")
+@GenerateItem(value = "{id}", configPath = "{configPath}")
 @Recipe.Shaped(
         pattern = {"x  ","xx ","xxx"},
         keys = @Recipe.Key(key = "x", value = "{material}"),
         id = "{id}",
-        count = 4
+        count = 4,
+        configPath = "{configPath}"
 )
 @BlockState(
         id = "{id}",
@@ -86,6 +87,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 public @interface Stairs {
     String id();
+
     String texture();
+
     String material();
+
+    String configPath() default "";
 }

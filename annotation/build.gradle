@@ -8,7 +8,7 @@ version 'unspecified'
 sourceCompatibility = 1.8
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190621-1.14.2'
+    mappings channel: 'snapshot', version: "$minecraftVersion"
 }
 
 dependencies {

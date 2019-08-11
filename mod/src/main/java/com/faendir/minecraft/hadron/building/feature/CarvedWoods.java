@@ -1,5 +1,6 @@
 package com.faendir.minecraft.hadron.building.feature;
 
+import com.faendir.minecraft.hadron.Hadron;
 import com.faendir.minecraft.hadron.annotation.Composite;
 import com.faendir.minecraft.hadron.annotation.Recipe;
 import com.faendir.minecraft.hadron.base.HadronCube;
@@ -41,10 +42,10 @@ public class CarvedWoods {
     @CarvedWood(id = CARVED_SPRUCE_WOOD_ID, texture = CARVED_SPRUCE_WOOD_ID, material = "minecraft:spruce_slab")
     public static final Block CARVED_SPRUCE_WOOD = new Block(Block.Properties.from(Blocks.SPRUCE_PLANKS)).setRegistryName(CARVED_SPRUCE_WOOD_ID);
 
+    public static final String CONFIG_PATH = Hadron.Module.BUILDING + ".CarvedWood";
 
-
-    @HadronCube(id = "{id}", texture = "{texture}")
-    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4)
+    @HadronCube(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
+    @Recipe.Shaped(id = "{id}", pattern = {"xx", "xx"}, keys = @Recipe.Key(key = "x", value = "{material}"), count = 4, configPath = CONFIG_PATH)
     @Composite
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})

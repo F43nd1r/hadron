@@ -37,6 +37,7 @@ public class GenerateWallProcessor extends BaseProcessor {
                             .addMember("id", "$S", wallId)
                             .addMember("texture", "$S", texture)
                             .addMember("material", "$S", ensureNameSpaced(generateWall.id()))
+                            .addMember("configPath", "$S", generateWall.configPath())
                             .build())
                             .initializer("new $T($T.from($T.$L)).setRegistryName($S)", WallBlock.class, Block.Properties.class, e.getEnclosingElement(), e, wallId)
                     .build());

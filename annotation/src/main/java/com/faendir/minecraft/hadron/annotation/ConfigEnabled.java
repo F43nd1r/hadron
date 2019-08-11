@@ -7,14 +7,10 @@ import java.lang.annotation.Target;
 
 /**
  * @author lukas
- * @since 01.07.19
+ * @since 02.08.19
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
-public @interface GenerateStairs {
-    String id();
-
-    String texture();
-
-    String configPath() default "";
+public @interface ConfigEnabled {
+    String value() default "";
 }

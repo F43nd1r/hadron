@@ -45,6 +45,7 @@ public class GenerateStairsProcessor extends BaseProcessor {
                             .addMember("id", "$S", stairId)
                             .addMember("texture", "$S", texture)
                             .addMember("material", "$S", ensureNameSpaced(generateStairs.id()))
+                            .addMember("configPath", "$S", generateStairs.configPath())
                             .build())
                     .initializer("new $1T($2T.$3L.getDefaultState(), $4T.from($2T.$3L)).setRegistryName($5S)", ClassName.get(PACKAGE, STAIRS_BASE_CLASS_NAME), e.getEnclosingElement(), e, Block.Properties.class, stairId)
                     .build());
