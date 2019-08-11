@@ -43,6 +43,7 @@ public class ModProcessor extends BaseProcessor {
                             .addStatement("this.builder = builder")
                             .build())
                     .addMethod(MethodSpec.methodBuilder("getBuilder")
+                            .addModifiers(Modifier.PUBLIC)
                             .returns(ForgeConfigSpec.Builder.class)
                             .addStatement("return builder").build())
                     .build();

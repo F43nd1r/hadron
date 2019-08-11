@@ -1,6 +1,7 @@
 package com.faendir.minecraft.hadron.misc.feature;
 
 import com.faendir.minecraft.hadron.Hadron;
+import com.faendir.minecraft.hadron.generated.HadronConfigCreationEvent;
 import com.faendir.minecraft.hadron.network.MessageSetLockProfile;
 import com.faendir.minecraft.hadron.network.NetworkHandler;
 import com.faendir.minecraft.hadron.network.NetworkMessage;
@@ -34,6 +35,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -61,6 +63,7 @@ public class LockDirectionHotkey {
     private static final HashMap<String, LockProfile> lockProfiles = new HashMap<>();
     private static final ResourceLocation GENERAL_ICONS_RESOURCE = new ResourceLocation(Hadron.ID, "textures/misc/general_icons.png");
     private static LockProfile clientProfile;
+    private static ForgeConfigSpec.BooleanValue enabled;
 
     static {
         NetworkHandler.register(MessageSetLockProfile.class);
@@ -79,6 +82,11 @@ public class LockDirectionHotkey {
         @SubscribeEvent
         public static void registerHotkey(FMLClientSetupEvent event) {
             ClientRegistry.registerKeyBinding(keyBinding);
+        }
+
+        @SubscribeEvent
+        public static void createConfig(HadronConfigCreationEvent event) {
+            enabled = event.getBuilder().define(Hadron.Module.MISC + ".LockDirection", true);
         }
     }
 
@@ -167,7 +175,7 @@ public class LockDirectionHotkey {
     public static void onKeyInputEvent(InputEvent.KeyInputEvent event) {
         Minecraft mc = Minecraft.getInstance();
         boolean down = keyBinding.isKeyDown();
-        if (mc.isGameFocused() && down) {
+        if (enabled.get() && mc.isGameFocused() && down) {
             LockProfile newProfile;
             RayTraceResult result = mc.objectMouseOver;
 
