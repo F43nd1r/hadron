@@ -16,5 +16,6 @@ public class Hadron {
     public static final class Module {
         public static final String BUILDING = "Building";
         public static final String MISC = "Misc";
+        public static final String TWEAKS = "Tweaks";
     }
 }
