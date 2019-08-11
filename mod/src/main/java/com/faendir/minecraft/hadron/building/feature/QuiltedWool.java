@@ -84,7 +84,7 @@ public class QuiltedWool {
 
     private static final String CONFIG_PATH = Hadron.Module.BUILDING + ".QuiltedWool";
     @HadronCube(id = "{id}", texture = "{texture}", configPath = CONFIG_PATH)
-    @Recipe.Shaped(id = "{id}", pattern = {"s", "xxx", "s"}, keys = {
+    @Recipe.Shaped(id = "{id}", pattern = {" s ", "xxx", " s "}, keys = {
             @Recipe.Key(key = "x", value = "{material}"),
             @Recipe.Key(key = "s", value = "minecraft:string")
     }, count = 4, configPath = CONFIG_PATH)
