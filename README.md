@@ -1,5 +1,5 @@
 # hadron
-A [Quark](https://github.com/Vazkii/Quark) by [Vazkii](https://github.com/Vazkii) Replacement Project for MC 1.14
+Project was never finished. Some useful processing stuff for MC 1.14 might be in there.
 
 
 
